@@ -11,7 +11,7 @@ namespace mcp_tests;
 [TestClass]
 public class FamilyServiceTests
 {
-    private FamilyService _familyService;
+    public required FamilyService _familyService;
 
     [TestInitialize]
     public void Setup()
