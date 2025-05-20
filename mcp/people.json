@@ -1,0 +1,173 @@
+[
+    {
+      "id": "p1",
+      "name": "William Carter",
+      "gender": "male",
+      "yearOfBirth": 1945,
+      "parents": [],
+      "spouses": ["p2"],
+      "children": ["p3", "p4"]
+    },
+    {
+      "id": "p2",
+      "name": "Margaret Carter",
+      "gender": "female",
+      "yearOfBirth": 1947,
+      "parents": [],
+      "spouses": ["p1"],
+      "children": ["p3", "p4"]
+    },
+    {
+      "id": "p3",
+      "name": "Elizabeth Carter",
+      "gender": "female",
+      "yearOfBirth": 1970,
+      "parents": ["p1", "p2"],
+      "spouses": ["p7"],
+      "children": ["p9", "p10"]
+    },
+    {
+      "id": "p4",
+      "name": "James Carter",
+      "gender": "male",
+      "yearOfBirth": 1972,
+      "parents": ["p1", "p2"],
+      "spouses": ["p5"],
+      "children": ["p11"]
+    },
+    {
+      "id": "p5",
+      "name": "Linda Carter (née Evans)",
+      "gender": "female",
+      "yearOfBirth": 1973,
+      "parents": ["p12", "p13"],
+      "spouses": ["p4"],
+      "children": ["p11"]
+    },
+    {
+      "id": "p6",
+      "name": "Michael Evans",
+      "gender": "male",
+      "yearOfBirth": 1975,
+      "parents": ["p12", "p13"],
+      "spouses": ["p8"],
+      "children": ["p14", "p15"]
+    },
+    {
+      "id": "p7",
+      "name": "David Smith",
+      "gender": "male",
+      "yearOfBirth": 1968,
+      "parents": ["p16", "p17"],
+      "spouses": ["p3"],
+      "children": ["p9", "p10"]
+    },
+    {
+      "id": "p8",
+      "name": "Susan Smith (née Brown)",
+      "gender": "female",
+      "yearOfBirth": 1976,
+      "parents": ["p18", "p19"],
+      "spouses": ["p6"],
+      "children": ["p14", "p15"]
+    },
+    {
+      "id": "p9",
+      "name": "Emily Smith",
+      "gender": "female",
+      "yearOfBirth": 1995,
+      "parents": ["p3", "p7"],
+      "spouses": [],
+      "children": []
+    },
+    {
+      "id": "p10",
+      "name": "Matthew Smith",
+      "gender": "male",
+      "yearOfBirth": 1998,
+      "parents": ["p3", "p7"],
+      "spouses": [],
+      "children": []
+    },
+    {
+      "id": "p11",
+      "name": "Sophie Carter",
+      "gender": "female",
+      "yearOfBirth": 2000,
+      "parents": ["p4", "p5"],
+      "spouses": [],
+      "children": []
+    },
+    {
+      "id": "p12",
+      "name": "Robert Evans",
+      "gender": "male",
+      "yearOfBirth": 1950,
+      "parents": [],
+      "spouses": ["p13"],
+      "children": ["p5", "p6"]
+    },
+    {
+      "id": "p13",
+      "name": "Patricia Evans",
+      "gender": "female",
+      "yearOfBirth": 1952,
+      "parents": [],
+      "spouses": ["p12"],
+      "children": ["p5", "p6"]
+    },
+    {
+      "id": "p14",
+      "name": "Daniel Evans",
+      "gender": "male",
+      "yearOfBirth": 2002,
+      "parents": ["p6", "p8"],
+      "spouses": [],
+      "children": []
+    },
+    {
+      "id": "p15",
+      "name": "Olivia Evans",
+      "gender": "female",
+      "yearOfBirth": 2005,
+      "parents": ["p6", "p8"],
+      "spouses": [],
+      "children": []
+    },
+    {
+      "id": "p16",
+      "name": "George Smith",
+      "gender": "male",
+      "yearOfBirth": 1943,
+      "parents": [],
+      "spouses": ["p17"],
+      "children": ["p7"]
+    },
+    {
+      "id": "p17",
+      "name": "Helen Smith",
+      "gender": "female",
+      "yearOfBirth": 1944,
+      "parents": [],
+      "spouses": ["p16"],
+      "children": ["p7"]
+    },
+    {
+      "id": "p18",
+      "name": "Thomas Brown",
+      "gender": "male",
+      "yearOfBirth": 1950,
+      "parents": [],
+      "spouses": ["p19"],
+      "children": ["p8"]
+    },
+    {
+      "id": "p19",
+      "name": "Barbara Brown",
+      "gender": "female",
+      "yearOfBirth": 1951,
+      "parents": [],
+      "spouses": ["p18"],
+      "children": ["p8"]
+    }
+  ]
