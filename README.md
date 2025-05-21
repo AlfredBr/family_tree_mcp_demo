@@ -34,6 +34,11 @@ This project provides a Model Context Protocol (MCP) server for exploring and qu
    dotnet run --project mcp/mcp.csproj
    ```
 
+   or
+    ```
+   Open 'mcp.json' in VSCode and select 'Start' to start the MCP server
+   ```
+
 The server will start and listen for MCP requests as configured in `.vscode/mcp.json`.
 
 ### Testing
@@ -43,10 +48,6 @@ Run all tests with:
 cd mcp_tests
 dotnet test
 ```
-
-## Extending
-- Add new tools to `FamilyTools.cs` using the `[McpServerTool]` attribute.
-- Update `people.json` to add or modify family members.
 
 ## Sample Questions
 
