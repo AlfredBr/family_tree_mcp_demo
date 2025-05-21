@@ -1,10 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Text.Json;
-using FamilyTreeApp.Services;
 using ModelContextProtocol.Server;
 
-namespace FamilyTreeApp.Tools;
+namespace FamilyTreeApp;
 
 [McpServerToolType]
 public static class FamilyTools
@@ -17,12 +16,12 @@ public static class FamilyTools
     }
 
     [McpServerTool, Description("Get a member of the family by id.")]
-    public static async Task<string> GetPerson(
+    public static async Task<string?> GetPerson(
         FamilyService familyService,
         [Description("The id of the person in the family")] string id
     )
     {
         var person = await familyService.GetPerson(id);
-        return JsonSerializer.Serialize(person);
+        return person is null ? null : JsonSerializer.Serialize(person);
     }
 }

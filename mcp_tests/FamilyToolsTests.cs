@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FamilyTreeApp;
 
 [TestClass]
-public class FamilyServiceTests
+public class FamilyToolsTests
 {
     public required FamilyService _familyService;
 
@@ -24,11 +21,13 @@ public class FamilyServiceTests
         var expectedCount = 19; // Adjust this based on your test data
 
         // Act
-        var result = await _familyService.GetFamily();
+        var result = await FamilyTools.GetFamily(_familyService);
+        // Deserialize the result to a list of Person objects
+        var people = JsonSerializer.Deserialize<List<Person>>(result);
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreEqual(expectedCount, result.Count);
+        Assert.AreEqual(expectedCount, people?.Count());
     }
 
     [TestMethod]
@@ -38,11 +37,13 @@ public class FamilyServiceTests
         var expectedId = "p1"; // Adjust this based on your test data
 
         // Act
-        var result = await _familyService.GetPerson(expectedId);
+        var result = await FamilyTools.GetPerson(_familyService, expectedId);
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreEqual(expectedId, result?.Id);
+        // Deserialize the result to a Person object
+        var person = JsonSerializer.Deserialize<Person>(result);
+        Assert.AreEqual(expectedId, person?.Id);
     }
 
     [TestMethod]
@@ -52,9 +53,10 @@ public class FamilyServiceTests
         var nonExistentId = "999"; // Adjust this based on your test data
 
         // Act
-        var result = await _familyService.GetPerson(nonExistentId);
+        var result = await FamilyTools.GetPerson(_familyService, nonExistentId);
 
         // Assert
         Assert.IsNull(result);
     }
+
 }

@@ -1,10 +1,9 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using FamilyTreeApp.Models;
 using Microsoft.Extensions.Logging;
 
-namespace FamilyTreeApp.Services;
+namespace FamilyTreeApp;
 
 public class FamilyService
 {

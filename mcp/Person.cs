@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace FamilyTreeApp.Models;
+namespace FamilyTreeApp;
 
 public class Person
 {

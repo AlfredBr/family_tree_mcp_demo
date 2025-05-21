@@ -1,7 +1,5 @@
 ﻿using System.ComponentModel;
-
-using FamilyTreeApp.Services;
-
+using FamilyTreeApp;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -14,6 +12,6 @@ builder.Logging.AddConsole(consoleLogOptions =>
     consoleLogOptions.LogToStandardErrorThreshold = LogLevel.Trace;
 });
 
-builder.Services.AddMcpServer().WithStdioServerTransport().WithToolsFromAssembly();
 builder.Services.AddSingleton<FamilyService>();
+builder.Services.AddMcpServer().WithStdioServerTransport().WithToolsFromAssembly();
 await builder.Build().RunAsync();

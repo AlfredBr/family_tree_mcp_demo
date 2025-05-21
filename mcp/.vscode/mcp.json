@@ -1,13 +1,13 @@
 {
     "inputs": [],
     "servers": {
-        "MyFirstMCP": {
+        "FamilyService": {
             "type": "stdio",
             "command": "dotnet",
             "args": [
                 "run",
                 "--project",
-                "../mcp/mcp.csproj"
+                "C:\\Users\\alfredbr\\src\\cs\\mcp\\mcp\\mcp.csproj"
             ]
         }
     }
