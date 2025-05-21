@@ -41,7 +41,7 @@ The server will start and listen for MCP requests as configured in `.vscode/mcp.
 Run all tests with:
 ```sh
 cd mcp_tests
- dotnet test
+dotnet test
 ```
 
 ## Extending
