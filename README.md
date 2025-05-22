@@ -1,4 +1,4 @@
-# Family Tree MCP Service
+# Family Tree MCP Demo
 
 This project provides a Model Context Protocol (MCP) server for exploring and querying a family tree. It is implemented in C# using .NET, and exposes tools for retrieving family members and their relationships.
 
