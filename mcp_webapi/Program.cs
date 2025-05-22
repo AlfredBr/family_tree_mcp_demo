@@ -1,4 +1,3 @@
-using System.Text.Json;
 using FamilyTreeApp;
 
 var builder = WebApplication.CreateBuilder(args);
