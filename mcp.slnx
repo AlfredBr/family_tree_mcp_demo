@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="family_webapi/family_webapi.csproj" />
+  <Project Path="mcp_client/mcp_client.csproj" />
+  <Project Path="mcp_library/mcp_library.csproj" />
+  <Project Path="mcp_tests/mcp_tests.csproj" />
+  <Project Path="mcp_webapi/mcp_webapi.csproj" />
+</Solution>

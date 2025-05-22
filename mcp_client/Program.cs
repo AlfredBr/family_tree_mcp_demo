@@ -56,7 +56,7 @@ while (true)
     {
         model = "gpt-4o",
         messages = chatHistory,
-        tools = new[]
+        tools = new object[]
         {
             new
             {
@@ -65,7 +65,11 @@ while (true)
                 {
                     name = "GetFamily",
                     description = "Get a list of people in a family.",
-                    parameters = new { },
+                    parameters = new
+                    {
+                        type = "object",
+                        properties = new { }
+                    },
                 },
             },
             new
@@ -75,7 +79,15 @@ while (true)
                 {
                     name = "GetPerson",
                     description = "Get a member of the family by id.",
-                    parameters = new { id = "string" },
+                    parameters = new
+                    {
+                        type = "object",
+                        properties = new
+                        {
+                            id = new { type = "string", description = "The ID of the person to retrieve." }
+                        },
+                        required = new[] { "id" }
+                    },
                 },
             },
         },
@@ -87,10 +99,12 @@ while (true)
         Encoding.UTF8,
         "application/json"
     );
+
     var response = await httpClient.PostAsync(
         "https://api.openai.com/v1/chat/completions",
         content
     );
+
     var responseString = await response.Content.ReadAsStringAsync();
 
     // Parse response and handle tool calls if present
