@@ -26,7 +26,7 @@ var mcpProcess = new System.Diagnostics.Process
         UseShellExecute = false,
         CreateNoWindow = true,
         WorkingDirectory = AppContext.BaseDirectory,
-    }
+    },
 };
 mcpProcess.Start();
 var mcpInput = mcpProcess.StandardInput;
@@ -35,7 +35,8 @@ var mcpOutput = mcpProcess.StandardOutput;
 var httpClient = new HttpClient();
 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
-string systemPrompt = "You are a helpful assistant with access to a family tree via MCP tools. Use the available tools to answer questions about the family.";
+string systemPrompt =
+    "You are a helpful assistant with access to a family tree via MCP tools. Use the available tools to answer questions about the family.";
 
 var chatHistory = new List<Dictionary<string, object>>
 {
@@ -57,28 +58,39 @@ while (true)
         messages = chatHistory,
         tools = new[]
         {
-            new {
+            new
+            {
                 type = "function",
-                function = new {
+                function = new
+                {
                     name = "GetFamily",
                     description = "Get a list of people in a family.",
                     parameters = new { },
                 },
             },
-            new {
+            new
+            {
                 type = "function",
-                function = new {
+                function = new
+                {
                     name = "GetPerson",
                     description = "Get a member of the family by id.",
                     parameters = new { id = "string" },
                 },
             },
         },
-        tool_choice = "auto"
+        tool_choice = "auto",
     };
 
-    var content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
-    var response = await httpClient.PostAsync("https://api.openai.com/v1/chat/completions", content);
+    var content = new StringContent(
+        JsonSerializer.Serialize(requestBody),
+        Encoding.UTF8,
+        "application/json"
+    );
+    var response = await httpClient.PostAsync(
+        "https://api.openai.com/v1/chat/completions",
+        content
+    );
     var responseString = await response.Content.ReadAsStringAsync();
 
     // Parse response and handle tool calls if present

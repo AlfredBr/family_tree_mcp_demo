@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\mcp\mcp.csproj" />
+    <ProjectReference Include="..\mcp_library\mcp.csproj" />
   </ItemGroup>
 
 </Project>
