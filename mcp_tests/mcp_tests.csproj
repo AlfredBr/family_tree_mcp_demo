@@ -13,11 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+    <ProjectReference Include="..\mcp_library\mcp_library.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\mcp_library\mcp.csproj" />
+    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
 
 </Project>
