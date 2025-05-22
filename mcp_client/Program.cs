@@ -13,13 +13,27 @@ if (string.IsNullOrWhiteSpace(apiKey))
     apiKey = Console.ReadLine();
 }
 
+if (string.IsNullOrWhiteSpace(apiKey))
+{
+    Console.WriteLine("API key is required.");
+    return;
+}
+
+var mcpLibraryProject = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "mcp_library", "mcp_library.csproj");
+
+if (!File.Exists(mcpLibraryProject))
+{
+    Console.WriteLine($"MCP library project not found at {mcpLibraryProject}.");
+    return;
+}
+
 // MCP server process info
 var mcpProcess = new System.Diagnostics.Process
 {
     StartInfo = new System.Diagnostics.ProcessStartInfo
     {
         FileName = "dotnet",
-        Arguments = "run --project ../mcp/mcp.csproj",
+        Arguments = $"run --project \"{mcpLibraryProject}\"",
         RedirectStandardInput = true,
         RedirectStandardOutput = true,
         RedirectStandardError = true,
@@ -28,9 +42,28 @@ var mcpProcess = new System.Diagnostics.Process
         WorkingDirectory = AppContext.BaseDirectory,
     },
 };
-mcpProcess.Start();
+
+var isRunning = mcpProcess.Start();
+if (!isRunning)
+{
+    Console.WriteLine("Failed to start MCP process.");
+    return;
+}
+
 var mcpInput = mcpProcess.StandardInput;
 var mcpOutput = mcpProcess.StandardOutput;
+
+// Start a background task to print MCP server stderr
+_ = Task.Run(async () =>
+{
+    string? line;
+    while ((line = await mcpProcess.StandardError.ReadLineAsync()) != null)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine($"[MCP STDERR] {line}");
+        Console.ResetColor();
+    }
+});
 
 var httpClient = new HttpClient();
 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
@@ -43,12 +76,16 @@ var chatHistory = new List<Dictionary<string, object>>
     new() { ["role"] = "system", ["content"] = systemPrompt },
 };
 
+await Task.Delay(10_000); // Give MCP server time to start
+
 while (true)
 {
     Console.Write("You: ");
     string? userInput = Console.ReadLine();
     if (string.IsNullOrWhiteSpace(userInput) || userInput.Trim().ToLower() == "exit")
+    {
         break;
+    }
 
     chatHistory.Add(new() { ["role"] = "user", ["content"] = userInput });
 
@@ -114,27 +151,57 @@ while (true)
     var message = choices[0].GetProperty("message");
     if (message.TryGetProperty("tool_calls", out var toolCalls))
     {
+        // Prepare tool results to add after all tool calls are processed
+        var toolResults = new List<Dictionary<string, object>>();
         foreach (var toolCall in toolCalls.EnumerateArray())
         {
             var function = toolCall.GetProperty("function");
             var name = function.GetProperty("name").GetString();
             var arguments = function.GetProperty("arguments").GetRawText();
-            // Forward tool call to MCP server
-            mcpInput.WriteLine(arguments); // This is a placeholder; actual MCP protocol may differ
+            // Compose full JSON-RPC 2.0 message
+            var mcpRequest = JsonSerializer.Serialize(new {
+                jsonrpc = "2.0",
+                id = Guid.NewGuid().ToString(),
+                method = name,
+                @params = JsonSerializer.Deserialize<JsonElement>(arguments)
+            });
+            mcpInput.WriteLine(mcpRequest);
             mcpInput.Flush();
             // Read response from MCP server
             string mcpResult = await mcpOutput.ReadLineAsync() ?? "";
-            // Add tool result to chat history
-            chatHistory.Add(
-                new Dictionary<string, object>
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"[MCP RESPONSE RAW] {mcpResult}");
+            Console.ResetColor();
+            string toolContent = mcpResult;
+            try
+            {
+                using var mcpJson = JsonDocument.Parse(mcpResult);
+                if (mcpJson.RootElement.TryGetProperty("result", out var resultProp))
                 {
-                    { "role", "tool" },
-                    { "tool_call_id", toolCall.GetProperty("id").GetString() },
-                    { "name", name },
-                    { "content", mcpResult },
+                    toolContent = resultProp.GetRawText();
                 }
-            );
+                else if (mcpJson.RootElement.TryGetProperty("error", out var errorProp))
+                {
+                    toolContent = errorProp.GetRawText();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"[MCP RESPONSE PARSE ERROR] {ex.Message}");
+                Console.ResetColor();
+            }
+            // Prepare tool result (do not add to chatHistory yet)
+            toolResults.Add(new Dictionary<string, object>
+            {
+                { "role", "tool" },
+                { "tool_call_id", toolCall.GetProperty("id").GetString() },
+                { "name", name },
+                { "content", toolContent },
+            });
         }
+        // Add all tool results to chatHistory at once
+        chatHistory.AddRange(toolResults);
         // Re-ask OpenAI for a final answer with tool results
         var followupContent = new StringContent(
             JsonSerializer.Serialize(new { model = "gpt-4o", messages = chatHistory }),
