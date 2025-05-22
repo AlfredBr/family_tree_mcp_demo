@@ -19,8 +19,10 @@ if (string.IsNullOrWhiteSpace(apiKey))
     return;
 }
 
+// path to the MCP library project
 var mcpLibraryProject = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "mcp_library", "mcp_library.csproj");
 
+// Check if the MCP library project exists
 if (!File.Exists(mcpLibraryProject))
 {
     Console.WriteLine($"MCP library project not found at {mcpLibraryProject}.");
@@ -43,13 +45,17 @@ var mcpProcess = new System.Diagnostics.Process
     },
 };
 
+// Start the MCP server process
 var isRunning = mcpProcess.Start();
+
+// Check if the process started successfully
 if (!isRunning)
 {
     Console.WriteLine("Failed to start MCP process.");
     return;
 }
 
+// get the input and output streams for the MCP server process
 var mcpInput = mcpProcess.StandardInput;
 var mcpOutput = mcpProcess.StandardOutput;
 
@@ -65,22 +71,28 @@ _ = Task.Run(async () =>
     }
 });
 
+// Give MCP server time to start (may need to compile the project)
+await Task.Delay(10_000);
+
+// create an HTTP client for OpenAI API requests
 var httpClient = new HttpClient();
 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
+// this is the system prompt for the assistant
 string systemPrompt =
-    "You are a helpful assistant with access to a family tree via MCP tools. Use the available tools to answer questions about the family.";
+    "You are a helpful assistant with access to a family tree via MCP tools. " +
+    "Use the available tools to answer questions about the family.";
 
+// initialize the chat history with the system prompt
 var chatHistory = new List<Dictionary<string, object>>
 {
     new() { ["role"] = "system", ["content"] = systemPrompt },
 };
 
-await Task.Delay(10_000); // Give MCP server time to start
-
+// begin the chat loop between the user and the assistant
 while (true)
 {
-    Console.Write("You: ");
+    Console.Write("User: ");
     string? userInput = Console.ReadLine();
     if (string.IsNullOrWhiteSpace(userInput) || userInput.Trim().ToLower() == "exit")
     {
@@ -89,6 +101,7 @@ while (true)
 
     chatHistory.Add(new() { ["role"] = "user", ["content"] = userInput });
 
+    // create the request body for the OpenAI API and send the request to the API
     var requestBody = new
     {
         model = "gpt-4o",
