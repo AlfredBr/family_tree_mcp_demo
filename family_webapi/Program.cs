@@ -9,7 +9,9 @@ app.MapGet(
     {
         var json = File.ReadAllText("people.json");
         var doc = JsonDocument.Parse(json);
-        return Results.Json(doc.RootElement);
+        var options = new JsonSerializerOptions { WriteIndented = true };
+        var formattedJson = JsonSerializer.Serialize(doc.RootElement, options);
+        return Results.Text(formattedJson, "application/json");
     }
 );
 

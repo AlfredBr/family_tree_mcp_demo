@@ -21,7 +21,7 @@ public class FamilyServiceTests
     public async Task GetFamily_ShouldReturnListOfPeople()
     {
         // Arrange
-        var expectedCount = 19; // Adjust this based on your test data
+        var expectedCount = 40; // Adjust this based on your test data
 
         // Act
         var result = await _familyService.GetFamily();

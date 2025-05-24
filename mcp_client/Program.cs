@@ -20,7 +20,15 @@ if (string.IsNullOrWhiteSpace(apiKey))
 }
 
 // path to the MCP library project
-var mcpLibraryProject = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "mcp_library", "mcp_library.csproj");
+var mcpLibraryProject = Path.Combine(
+    AppContext.BaseDirectory,
+    "..",
+    "..",
+    "..",
+    "..",
+    "mcp_library",
+    "mcp_library.csproj"
+);
 
 // Check if the MCP library project exists
 if (!File.Exists(mcpLibraryProject))
@@ -80,8 +88,8 @@ httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("
 
 // this is the system prompt for the assistant
 string systemPrompt =
-    "You are a helpful assistant with access to a family tree via MCP tools. " +
-    "Use the available tools to answer questions about the family.";
+    "You are a helpful assistant with access to a family tree via MCP tools. "
+    + "Use the available tools to answer questions about the family.";
 
 // initialize the chat history with the system prompt
 var chatHistory = new List<Dictionary<string, object>>
@@ -115,11 +123,7 @@ while (true)
                 {
                     name = "GetFamily",
                     description = "Get a list of people in a family.",
-                    parameters = new
-                    {
-                        type = "object",
-                        properties = new { }
-                    },
+                    parameters = new { type = "object", properties = new { } },
                 },
             },
             new
@@ -134,9 +138,13 @@ while (true)
                         type = "object",
                         properties = new
                         {
-                            id = new { type = "string", description = "The ID of the person to retrieve." }
+                            id = new
+                            {
+                                type = "string",
+                                description = "The ID of the person to retrieve.",
+                            },
                         },
-                        required = new[] { "id" }
+                        required = new[] { "id" },
                     },
                 },
             },
@@ -169,15 +177,18 @@ while (true)
         foreach (var toolCall in toolCalls.EnumerateArray())
         {
             var function = toolCall.GetProperty("function");
-            var name = function.GetProperty("name").GetString();
+            var name = function.GetProperty("name").GetString()!;
             var arguments = function.GetProperty("arguments").GetRawText();
             // Compose full JSON-RPC 2.0 message
-            var mcpRequest = JsonSerializer.Serialize(new {
-                jsonrpc = "2.0",
-                id = Guid.NewGuid().ToString(),
-                method = name,
-                @params = JsonSerializer.Deserialize<JsonElement>(arguments)
-            });
+            var mcpRequest = JsonSerializer.Serialize(
+                new
+                {
+                    jsonrpc = "2.0",
+                    id = Guid.NewGuid().ToString(),
+                    method = name,
+                    @params = JsonSerializer.Deserialize<JsonElement>(arguments),
+                }
+            );
             mcpInput.WriteLine(mcpRequest);
             mcpInput.Flush();
             // Read response from MCP server
@@ -205,13 +216,15 @@ while (true)
                 Console.ResetColor();
             }
             // Prepare tool result (do not add to chatHistory yet)
-            toolResults.Add(new Dictionary<string, object>
-            {
-                { "role", "tool" },
-                { "tool_call_id", toolCall.GetProperty("id").GetString() },
-                { "name", name },
-                { "content", toolContent },
-            });
+            toolResults.Add(
+                new Dictionary<string, object>
+                {
+                    { "role", "tool" },
+                    { "tool_call_id", toolCall.GetProperty("id").GetString()! },
+                    { "name", name },
+                    { "content", toolContent },
+                }
+            );
         }
         // Add all tool results to chatHistory at once
         chatHistory.AddRange(toolResults);
@@ -229,13 +242,13 @@ while (true)
         using var followupDoc = JsonDocument.Parse(followupString);
         var followupChoices = followupDoc.RootElement.GetProperty("choices");
         var followupMessage = followupChoices[0].GetProperty("message");
-        var finalContent = followupMessage.GetProperty("content").GetString();
+        var finalContent = followupMessage.GetProperty("content").GetString()!;
         Console.WriteLine($"Assistant: {finalContent}\n");
         chatHistory.Add(new() { ["role"] = "assistant", ["content"] = finalContent });
     }
     else
     {
-        var contentText = message.GetProperty("content").GetString();
+        var contentText = message.GetProperty("content").GetString()!;
         Console.WriteLine($"Assistant: {contentText}\n");
         chatHistory.Add(new() { ["role"] = "assistant", ["content"] = contentText });
     }
