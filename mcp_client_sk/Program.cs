@@ -27,11 +27,11 @@ builder.ConfigureServices(
         // Get OpenAI API key from environment variable
         var openAIApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
 
-		if (string.IsNullOrEmpty(openAIApiKey))
-		{
-			// [System.Environment]::SetEnvironmentVariable("OPENAI_API_KEY", "my_api_key_value_from_https://platform.openai.com/settings/organization/api-keys", "User")
-			throw new InvalidOperationException("OPENAI_API_KEY environment variable is required");
-		}
+        if (string.IsNullOrEmpty(openAIApiKey))
+        {
+            // [System.Environment]::SetEnvironmentVariable("OPENAI_API_KEY", "my_api_key_value_from_https://platform.openai.com/settings/organization/api-keys", "User")
+            throw new InvalidOperationException("OPENAI_API_KEY environment variable is required");
+        }
 
         // Configure OpenAI
         services.AddOpenAIChatCompletion("gpt-4o", openAIApiKey);
