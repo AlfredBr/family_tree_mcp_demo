@@ -1,8 +1,10 @@
 #pragma warning disable SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
 using System.ComponentModel;
-using FamilyTreeApp;
 using Microsoft.SemanticKernel;
+
+namespace FamilyTreeApp;
+
 // Family Tools Plugin class to wrap the static FamilyTools methods
 public class FamilyToolsPlugin
 {

@@ -1,7 +1,7 @@
 ﻿#pragma warning disable SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
 using FamilyTreeApp;
-using Microsoft.Extensions.Configuration;
+//using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.SemanticKernel;
@@ -16,7 +16,7 @@ builder.ConfigureServices(
     (context, services) =>
     {
         // Add configuration for OpenAI API key
-        var configuration = context.Configuration;
+        //var configuration = context.Configuration;
 
         // Add FamilyService
         services.AddSingleton<FamilyService>();
@@ -61,10 +61,13 @@ Console.WriteLine();
 
 var chatHistory = new ChatHistory();
 chatHistory.AddSystemMessage(
-    @"You are a helpful assistant that can answer questions about a family tree.
-You have access to family tools that can get information about people and their relationships.
-When users ask about the family, use the available tools to get the information.
-Be conversational and helpful in your responses."
+    $@"You are a helpful assistant that can answer questions about a family tree.
+    You have access to family tools that can get information about people and their relationships.
+    When users ask about the family, use the available tools to get the information.
+    Be conversational and helpful in your responses.
+    Do not use Markdown notation in your responses.
+    When you give your answer, provide a summary of how you determined that answer.
+    Today's date is {DateTime.Today}."
 );
 
 while (true)
@@ -72,7 +75,7 @@ while (true)
     Console.Write("You: ");
     var userInput = Console.ReadLine();
 
-    if (string.IsNullOrWhiteSpace(userInput) || userInput.ToLower() == "exit")
+    if (string.IsNullOrWhiteSpace(userInput) || userInput.Equals("exit", StringComparison.CurrentCultureIgnoreCase))
     {
         break;
     }
@@ -95,8 +98,10 @@ while (true)
             kernel
         );
 
-        Console.Write("\rAssistant: ");
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.Write("\nAssistant: ");
         Console.WriteLine(response.Content);
+        Console.ResetColor();
         chatHistory.AddAssistantMessage(response.Content ?? "");
     }
     catch (Exception ex)

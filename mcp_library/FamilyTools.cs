@@ -16,10 +16,8 @@ public static class FamilyTools
     }
 
     [McpServerTool, Description("Get a particular member of the family by id.")]
-    public static async Task<string?> GetPerson(
-        FamilyService familyService,
-        [Description("The id of the person in the family")] string id
-    )
+    public static async Task<string?> GetPerson(FamilyService familyService,
+        [Description("The id of the person in the family")] string id)
     {
         var person = await familyService.GetPerson(id);
         return person is null ? null : JsonSerializer.Serialize(person);
