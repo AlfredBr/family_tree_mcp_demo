@@ -63,7 +63,7 @@ _ = Task.Run(async () =>
 	string? line;
 	while ((line = await mcpProcess.StandardError.ReadLineAsync()) != null)
 	{
-		Console.ForegroundColor = ConsoleColor.Red;
+		Console.ForegroundColor = ConsoleColor.Yellow;
 		Console.WriteLine($"[MCP STDERR] {line}");
 		Console.ResetColor();
 	}
@@ -75,6 +75,13 @@ await Task.Delay(10_000);
 // Create HTTP client for OpenAI API
 var httpClient = new HttpClient();
 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+
+// Define mapping between OpenAI function names and MCP method names
+var functionToMethodMap = new Dictionary<string, string>
+{
+	{ "GetFamily", "FamilyTreeApp.FamilyTools.GetFamily" },
+	{ "GetPerson", "FamilyTreeApp.FamilyTools.GetPerson" }
+};
 
 // Define system prompt with pre-prompt instructions
 var prePromptInstructions = new List<string>
@@ -167,9 +174,13 @@ while (true)
 			"application/json"
 		);
 
+#pragma warning disable S1075
+		const string chatCompletionsUri = "https://api.openai.com/v1/chat/completions";
+#pragma warning restore S1075
+
 		// Send request to OpenAI
 		var response = await httpClient.PostAsync(
-			"https://api.openai.com/v1/chat/completions",
+			chatCompletionsUri,
 			content
 		);
 
@@ -188,9 +199,16 @@ while (true)
 			foreach (var toolCall in toolCalls.EnumerateArray())
 			{
 				var function = toolCall.GetProperty("function");
-				var name = function.GetProperty("name").GetString()!;
+				var openAiName = function.GetProperty("name").GetString()!;
 				var arguments = function.GetProperty("arguments").GetRawText();
 				var toolCallId = toolCall.GetProperty("id").GetString()!;
+
+				// Map OpenAI function name to MCP method name
+				if (!functionToMethodMap.TryGetValue(openAiName, out var mcpMethodName))
+				{
+					Console.WriteLine($"[ERROR] Unknown function: {openAiName}");
+					continue;
+				}
 
 				// Create JSON-RPC request for MCP
 				var mcpRequest = JsonSerializer.Serialize(
@@ -198,7 +216,7 @@ while (true)
 					{
 						jsonrpc = "2.0",
 						id = Guid.NewGuid().ToString(),
-						method = name,
+						method = mcpMethodName,
 						@params = JsonSerializer.Deserialize<JsonElement>(arguments),
 					}
 				);
@@ -234,7 +252,7 @@ while (true)
 				{
 					["role"] = "tool",
 					["tool_call_id"] = toolCallId,
-					["name"] = name,
+					["name"] = openAiName,
 					["content"] = toolContent
 				});
 			}
@@ -253,7 +271,7 @@ while (true)
 			);
 
 			var followupResponse = await httpClient.PostAsync(
-				"https://api.openai.com/v1/chat/completions",
+				chatCompletionsUri,
 				followupContent
 			);
 
