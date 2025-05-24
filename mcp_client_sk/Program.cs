@@ -58,9 +58,11 @@ var host = builder.Build();
 // Get services
 var kernel = host.Services.GetRequiredService<Kernel>();
 var familyService = host.Services.GetRequiredService<FamilyService>();
+var logger = host.Services.GetRequiredService<ILogger<Program>>();
 
 // Add the family tools as plugins to the kernel
 kernel.Plugins.AddFromObject(new FamilyToolsPlugin(familyService), "FamilyTools");
+logger.LogInformation("Family tools plugin loaded.");
 
 // Get chat completion service
 var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
@@ -106,6 +108,7 @@ while (true)
         || userInput.Equals("exit", StringComparison.CurrentCultureIgnoreCase)
     )
     {
+        logger.LogInformation("Exiting chat loop.");
         break;
     }
 
