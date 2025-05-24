@@ -59,45 +59,58 @@ Console.WriteLine("- Who are the parents of Elizabeth Carter?");
 Console.WriteLine("- Get details for person p5");
 Console.WriteLine();
 
-var chatHistory = new ChatHistory();
-chatHistory.AddSystemMessage(
-    $@"You are a helpful assistant that can answer questions about a family tree.
-    You have access to family tools that can get information about people and their relationships.
-    When users ask about the family, use the available tools to get the information.
-    Be conversational and helpful in your responses.
-    Do not use Markdown notation in your responses.
-    When you give your answer, provide a summary of how you determined that answer.
-    Today's date is {DateTime.Today}."
-);
+// Define the system message as a list of strings
+var prePromptInstructions = new List<string>
+{
+    "You are a helpful assistant that can answer questions about a family tree.",
+    "You have access to family tools that can get information about people and their relationships.",
+    "When users ask about the family, use the available tools to get the information.",
+    "Be conversational and helpful in your responses.",
+    "Do not use Markdown notation in your responses.",
+    "When you give your answer, provide a summary of how you determined that answer.",
+    "Double check your answers before responding.  Assume that you have made a mistake and you need to verify your response.",
+    $"Today's date is {DateTime.Today}."
+};
 
+// Create a new chat history
+var chatHistory = new ChatHistory();
+
+// add the prePromptInstructions to the chat history as a system message
+chatHistory.AddSystemMessage(string.Join(" ", prePromptInstructions));
+
+// begin the chat loop
 while (true)
 {
     Console.Write("You: ");
     var userInput = Console.ReadLine();
 
+    // Check for exit command
     if (string.IsNullOrWhiteSpace(userInput) || userInput.Equals("exit", StringComparison.CurrentCultureIgnoreCase))
     {
         break;
     }
 
+    // Add user message to chat history
     chatHistory.AddUserMessage(userInput);
 
     try
     {
         Console.WriteLine("Assistant is thinking...");
 
-        // Enable auto function calling
+        // Enable auto function calling (i.e. tool use)
         OpenAIPromptExecutionSettings executionSettings = new()
         {
             FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
         };
 
+        // Get the chat message content asynchronously
         var response = await chatCompletionService.GetChatMessageContentAsync(
             chatHistory,
             executionSettings,
             kernel
         );
 
+        // Display the assistant's response
         Console.ForegroundColor = ConsoleColor.Cyan;
         Console.Write("\nAssistant: ");
         Console.WriteLine(response.Content);
