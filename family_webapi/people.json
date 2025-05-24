@@ -169,5 +169,194 @@
       "parents": [],
       "spouses": ["p18"],
       "children": ["p8"]
+    },
+    {
+      "id": "p20",
+      "name": "Lucas Carter",
+      "gender": "male",
+      "yearOfBirth": 2024,
+      "parents": ["p9"],
+      "spouses": [],
+      "children": []
+    },
+    {
+      "id": "p21",
+      "name": "Grace Carter",
+      "gender": "female",
+      "yearOfBirth": 2023,
+      "parents": ["p10"],
+      "spouses": [],
+      "children": []
+    },
+    {
+      "id": "p22",
+      "name": "Henry Carter",
+      "gender": "male",
+      "yearOfBirth": 2025,
+      "parents": ["p11"],
+      "spouses": [],
+      "children": []
+    },
+    {
+      "id": "p23",
+      "name": "Sophia Evans",
+      "gender": "female",
+      "yearOfBirth": 2022,
+      "parents": ["p15"],
+      "spouses": [],
+      "children": []
+    },
+    {
+      "id": "p24",
+      "name": "Jack Evans",
+      "gender": "male",
+      "yearOfBirth": 2024,
+      "parents": ["p14"],
+      "spouses": [],
+      "children": []
+    },
+    {
+      "id": "p25",
+      "name": "Isabella Evans",
+      "gender": "female",
+      "yearOfBirth": 2025,
+      "parents": ["p14"],
+      "spouses": [],
+      "children": []
+    },
+    {
+      "id": "p26",
+      "name": "Mason Carter",
+      "gender": "male",
+      "yearOfBirth": 2025,
+      "parents": ["p9"],
+      "spouses": [],
+      "children": []
+    },
+    {
+      "id": "p27",
+      "name": "Ava Carter",
+      "gender": "female",
+      "yearOfBirth": 2025,
+      "parents": ["p10"],
+      "spouses": [],
+      "children": []
+    },
+    {
+      "id": "p28",
+      "name": "Noah Smith",
+      "gender": "male",
+      "yearOfBirth": 2024,
+      "parents": ["p9"],
+      "spouses": [],
+      "children": []
+    },
+    {
+      "id": "p29",
+      "name": "Mia Smith",
+      "gender": "female",
+      "yearOfBirth": 2025,
+      "parents": ["p10"],
+      "spouses": [],
+      "children": []
+    },
+    {
+      "id": "p30",
+      "name": "Alex Johnson",
+      "gender": "male",
+      "yearOfBirth": 1980,
+      "parents": [],
+      "spouses": ["p31"],
+      "children": ["p32", "p33"]
+    },
+    {
+      "id": "p31",
+      "name": "Emily Johnson",
+      "gender": "female",
+      "yearOfBirth": 1982,
+      "parents": [],
+      "spouses": ["p30"],
+      "children": ["p32", "p33"]
+    },
+    {
+      "id": "p32",
+      "name": "Ella Johnson",
+      "gender": "female",
+      "yearOfBirth": 2010,
+      "parents": ["p30", "p31"],
+      "spouses": [],
+      "children": []
+    },
+    {
+      "id": "p33",
+      "name": "Liam Johnson",
+      "gender": "male",
+      "yearOfBirth": 2012,
+      "parents": ["p30", "p31"],
+      "spouses": [],
+      "children": []
+    },
+    {
+      "id": "p34",
+      "name": "Olivia Martinez",
+      "gender": "female",
+      "yearOfBirth": 1990,
+      "parents": [],
+      "spouses": [],
+      "children": []
+    },
+    {
+      "id": "p35",
+      "name": "Benjamin Lee",
+      "gender": "male",
+      "yearOfBirth": 1978,
+      "parents": [],
+      "spouses": ["p36"],
+      "children": ["p37"]
+    },
+    {
+      "id": "p36",
+      "name": "Chloe Lee",
+      "gender": "female",
+      "yearOfBirth": 1980,
+      "parents": [],
+      "spouses": ["p35"],
+      "children": ["p37"]
+    },
+    {
+      "id": "p37",
+      "name": "Lucas Lee",
+      "gender": "male",
+      "yearOfBirth": 2015,
+      "parents": ["p35", "p36"],
+      "spouses": [],
+      "children": []
+    },
+    {
+      "id": "p38",
+      "name": "Harper Kim",
+      "gender": "female",
+      "yearOfBirth": 2000,
+      "parents": [],
+      "spouses": [],
+      "children": []
+    },
+    {
+      "id": "p39",
+      "name": "Ethan Patel",
+      "gender": "male",
+      "yearOfBirth": 1995,
+      "parents": [],
+      "spouses": [],
+      "children": []
+    },
+    {
+      "id": "p40",
+      "name": "Charlotte Nguyen",
+      "gender": "female",
+      "yearOfBirth": 1985,
+      "parents": [],
+      "spouses": [],
+      "children": []
     }
   ]
