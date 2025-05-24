@@ -81,7 +81,7 @@ while (true)
 
     try
     {
-        Console.Write("Assistant is thinking...");
+        Console.WriteLine("Assistant is thinking...");
 
         // Enable auto function calling
         OpenAIPromptExecutionSettings executionSettings = new()
