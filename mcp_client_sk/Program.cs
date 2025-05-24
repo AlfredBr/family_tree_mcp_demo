@@ -56,7 +56,8 @@ Console.WriteLine("Type 'exit' to quit.");
 Console.WriteLine("Examples:");
 Console.WriteLine("- List all people in the family");
 Console.WriteLine("- Who are the parents of Elizabeth Carter?");
-Console.WriteLine("- Get details for person p5");
+Console.WriteLine("- What is the relationship between Emily Smith and William Carter?");
+Console.WriteLine("- Get details for person p5.");
 Console.WriteLine();
 
 // Define the system message as a list of strings
