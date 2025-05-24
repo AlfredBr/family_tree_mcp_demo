@@ -1,8 +1,9 @@
 using System.Text.Json;
+using Microsoft.Extensions.Logging.Console;
 
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Console; // Add this namespace to resolve LogColorBehavior
+#pragma warning disable S125
 
+// Create a new web application
 var builder = WebApplication.CreateBuilder(args);
 
 // Add logging configuration
