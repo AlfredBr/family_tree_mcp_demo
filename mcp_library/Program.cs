@@ -27,7 +27,7 @@ foreach (var type in toolTypes)
 
     foreach (var method in toolMethods)
     {
-        Console.Error.WriteLine($"[MCP TOOL] Registered tool: {type.FullName}.{method.Name}");
+        await Console.Error.WriteLineAsync($"[MCP TOOL] Registered tool: {type.FullName}.{method.Name}");
     }
 }
 
