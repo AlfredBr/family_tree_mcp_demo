@@ -10,7 +10,16 @@ Pop-Location
 Push-Location .\mcp_webapi
 dotnet build
 Pop-Location
-push-Location .\mcp_client
+
+push-Location .\mcp_client_http
+dotnet build
+Pop-Location
+
+push-Location .\mcp_client_sk
+dotnet build
+Pop-Location
+
+push-Location .\mcp_client_meai
 dotnet build
 Pop-Location
 
