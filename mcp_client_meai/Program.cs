@@ -1,14 +1,15 @@
-﻿using System.Diagnostics;
-using System.Text.Json;
+﻿using FamilyTreeApp;
 
 using Microsoft.Extensions.AI;
-//using Microsoft.Extensions.AI.OpenAI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 
-using FamilyTreeApp;
+using OpenAI;
+
+using System.Diagnostics;
+using System.Text.Json;
 
 // Build configuration
 var builder = Host.CreateDefaultBuilder(args);
@@ -44,9 +45,7 @@ builder.ConfigureServices(
         }
 
         // Register ChatClient using Microsoft.Extensions.AI.OpenAI
-        services.AddSingleton<IChatClient>(
-            provider => new OpenAI.Chat.ChatClient("gpt-4o", apiKey).AsIChatClient()
-        );
+        services.AddSingleton<IChatClient>(provider => new OpenAI.Chat.ChatClient("gpt-4o", apiKey).AsIChatClient());
     }
 );
 
@@ -72,7 +71,7 @@ if (!File.Exists(mcpLibraryProject))
     return;
 }
 
-var mcpProcess = new System.Diagnostics.Process
+var mcpProcess = new Process
 {
     StartInfo = new System.Diagnostics.ProcessStartInfo
     {
@@ -88,9 +87,10 @@ var mcpProcess = new System.Diagnostics.Process
 };
 
 mcpProcess.Start();
+logger.LogInformation("MCP server started.");
+
 var mcpInput = mcpProcess.StandardInput;
 var mcpOutput = mcpProcess.StandardOutput;
-logger.LogInformation("MCP server started.");
 
 // Background task for stderr
 _ = Task.Run(async () =>
@@ -98,7 +98,7 @@ _ = Task.Run(async () =>
     string? line;
     while ((line = await mcpProcess.StandardError.ReadLineAsync()) != null)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
+        Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine($"[MCP STDERR] {line}");
         Console.ResetColor();
     }
@@ -107,11 +107,15 @@ _ = Task.Run(async () =>
 await Task.Delay(10_000); // Wait for MCP server to start
 
 // Get ChatClient from DI
-var chatClient = host.Services.GetRequiredService<IChatClient>();
+var openAiClient = host.Services.GetRequiredService<IChatClient>();
+var chatClient = new ChatClientBuilder(openAiClient).UseFunctionInvocation().Build();
+var chatOptions = new ChatOptions { Tools = [AIFunctionFactory.Create(FamilyTools.GetFamily)] };
 
+Console.ForegroundColor = ConsoleColor.Gray;
 Console.WriteLine("=== Family Tree ChatBot with GPT-4o ===");
 Console.WriteLine("Ask me about family members, relationships, or type 'quit' to exit.");
 Console.WriteLine();
+Console.ResetColor();
 
 var prePromptInstructions = new List<string>
 {
@@ -125,16 +129,10 @@ var prePromptInstructions = new List<string>
     $"Today's date is {DateTime.Today}.",
 };
 
+// Initialize conversation history using Microsoft.Extensions.AI.CharMessage type
+var conversation = new List<ChatMessage> { new(ChatRole.System, string.Join(" ", prePromptInstructions)) };
 
-// Initialize conversation history using proper Microsoft.Extensions.AI types
-var conversation = new List<ChatMessage>
-{
-    new(
-        ChatRole.System,
-        string.Join(" ", prePromptInstructions)
-    ),
-};
-
+// Start the chat loop
 while (true)
 {
     Console.ForegroundColor = ConsoleColor.Green;
@@ -144,38 +142,31 @@ while (true)
     var userInput = Console.ReadLine();
     if (string.IsNullOrWhiteSpace(userInput) || userInput.Equals("quit", StringComparison.CurrentCultureIgnoreCase))
     {
+        // Exit the chat loop
+        logger.LogInformation("Exiting chat loop.");
         break;
     }
 
     try
     {
+        conversation.Add(new ChatMessage(ChatRole.User, userInput));
+
         Console.ForegroundColor = ConsoleColor.Cyan;
         Console.Write("Assistant: ");
-        Console.ResetColor();
 
-        if (
-            userInput.Contains("family", StringComparison.CurrentCultureIgnoreCase)
-            || userInput.Contains("member", StringComparison.CurrentCultureIgnoreCase)
-            || userInput.Contains("list", StringComparison.CurrentCultureIgnoreCase)
-        )
+        Console.ForegroundColor = ConsoleColor.White;
+
+        await foreach (var message in chatClient.GetStreamingResponseAsync(conversation, chatOptions))
         {
-            // Call MCP server to get family data
-            var familyData = await CallMcpTool(mcpInput, mcpOutput, "GetFamily", new object[] { new { } });
-            if (!string.IsNullOrEmpty(familyData))
+            Console.Write(message);
+
+            if (message.Role == ChatRole.Assistant)
             {
-                Console.WriteLine($"Here's the family data: {familyData}");
-            }
-            else
-            {
-                Console.WriteLine("I couldn't retrieve the family data at the moment.");
+                conversation.Add(new ChatMessage(ChatRole.Assistant, message.Contents));
             }
         }
-        else
-        {
-            Console.WriteLine(
-                "I'm a family tree assistant. Ask me about family members, relationships, or say 'list family' to see all members!"
-            );
-        }
+
+        Console.ResetColor();
 
         Console.WriteLine();
     }
@@ -203,49 +194,3 @@ catch (Exception ex)
     Console.WriteLine($"Error while cleaning up MCP process: {ex.Message}");
 }
 
-// Helper method to call MCP tools
-async Task<string?> CallMcpTool(
-    StreamWriter input,
-    StreamReader output,
-    string toolName,
-    object[] parameters
-)
-{
-    try
-    {
-        var request = new
-        {
-            jsonrpc = "2.0",
-            id = Guid.NewGuid().ToString(),
-            method = "tools/call",
-            @params = new
-            {
-                name = toolName,
-                arguments = parameters.Length > 0 ? parameters[0] : new { },
-            },
-        };
-
-        var requestJson = JsonSerializer.Serialize(request);
-        await input.WriteLineAsync(requestJson);
-        await input.FlushAsync();
-
-        var responseJson = await output.ReadLineAsync();
-        if (!string.IsNullOrEmpty(responseJson))
-        {
-            var response = JsonSerializer.Deserialize<JsonElement>(responseJson);
-            if (
-                response.TryGetProperty("result", out var result)
-                && result.TryGetProperty("content", out var content)
-            )
-            {
-                return content.GetString();
-            }
-        }
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Failed to call MCP tool {toolName}: {ex.Message}");
-    }
-
-    return null;
-}
