@@ -1,4 +1,5 @@
 ﻿#pragma warning disable SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
+#pragma warning disable S125
 
 using FamilyTreeApp;
 //using Microsoft.Extensions.Configuration;
@@ -99,14 +100,14 @@ chatHistory.AddSystemMessage(string.Join(" ", prePromptInstructions));
 // begin the chat loop
 while (true)
 {
+    Console.ForegroundColor = ConsoleColor.Green;
     Console.Write("You: ");
+    Console.ResetColor();
+
     var userInput = Console.ReadLine();
 
     // Check for exit command
-    if (
-        string.IsNullOrWhiteSpace(userInput)
-        || userInput.Equals("exit", StringComparison.CurrentCultureIgnoreCase)
-    )
+    if (string.IsNullOrWhiteSpace(userInput) || userInput.Equals("exit", StringComparison.CurrentCultureIgnoreCase))
     {
         logger.LogInformation("Exiting chat loop.");
         break;
@@ -120,24 +121,22 @@ while (true)
         Console.WriteLine("Assistant is thinking...");
 
         // Enable auto function calling (i.e. tool use)
-        OpenAIPromptExecutionSettings executionSettings = new()
-        {
-            FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
-        };
+        var executionSettings = new OpenAIPromptExecutionSettings { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() };
 
         // Get the chat message content asynchronously
-        var response = await chatCompletionService.GetChatMessageContentAsync(
-            chatHistory,
-            executionSettings,
-            kernel
-        );
+        var response = await chatCompletionService.GetChatMessageContentAsync(chatHistory, executionSettings, kernel);
 
         // Display the assistant's response
         Console.ForegroundColor = ConsoleColor.Cyan;
         Console.Write("\nAssistant: ");
         Console.WriteLine(response.Content);
         Console.ResetColor();
-        chatHistory.AddAssistantMessage(response.Content ?? "");
+
+        // Add the assistant's response to the chat history
+        if (response.Content != null)
+        {
+            chatHistory.AddAssistantMessage(response.Content);
+        }
     }
     catch (Exception ex)
     {
