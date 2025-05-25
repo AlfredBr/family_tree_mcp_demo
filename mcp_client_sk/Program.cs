@@ -50,7 +50,7 @@ builder.ConfigureServices(
         }
 
         // Configure OpenAI
-        services.AddOpenAIChatCompletion("gpt-4o", openAIApiKey);
+        services.AddOpenAIChatCompletion("gpt-4o-mini", openAIApiKey);
     }
 );
 
@@ -68,7 +68,8 @@ logger.LogInformation("Family tools plugin loaded.");
 // Get chat completion service
 var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
 
-Console.WriteLine("🌳 Family Tree Chatbot powered by GPT-4o");
+Console.ForegroundColor = ConsoleColor.Gray;
+Console.WriteLine("🌳 Family Tree Chatbot powered by GPT-4o-mini");
 Console.WriteLine("Ask me anything about the family tree!");
 Console.WriteLine("Type 'exit' to quit.");
 Console.WriteLine("Examples:");
@@ -77,6 +78,7 @@ Console.WriteLine("- Who are the parents of Elizabeth Carter?");
 Console.WriteLine("- What is the relationship between Emily Smith and William Carter?");
 Console.WriteLine("- Get details for person p5.");
 Console.WriteLine();
+Console.ResetColor();
 
 // Define the system message as a list of strings
 var prePromptInstructions = new List<string>
@@ -129,8 +131,10 @@ while (true)
         // Display the assistant's response
         Console.ForegroundColor = ConsoleColor.Cyan;
         Console.Write("\nAssistant: ");
+        Console.ForegroundColor = ConsoleColor.White;
         Console.WriteLine(response.Content);
         Console.ResetColor();
+        Console.WriteLine();
 
         // Add the assistant's response to the chat history
         if (response.Content != null)
@@ -140,10 +144,11 @@ while (true)
     }
     catch (Exception ex)
     {
+        Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine($"Error: {ex.Message}");
+        Console.ResetColor();
+        Console.WriteLine();
     }
-
-    Console.WriteLine();
 }
 
 Console.WriteLine("Goodbye!");
