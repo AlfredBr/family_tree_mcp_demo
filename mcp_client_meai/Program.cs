@@ -150,24 +150,78 @@ while (true)
     try
     {
         conversation.Add(new ChatMessage(ChatRole.User, userInput));
+        bool handledToolCall = false;
 
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.Write("Assistant: ");
-
-        Console.ForegroundColor = ConsoleColor.White;
-
-        await foreach (var message in chatClient.GetStreamingResponseAsync(conversation, chatOptions))
+        while (true)
         {
-            Console.Write(message);
-
-            if (message.Role == ChatRole.Assistant)
+            var responseMessages = new List<ChatMessage>();
+            await foreach (var messageUpdate in chatClient.GetStreamingResponseAsync(conversation, chatOptions))
             {
-                conversation.Add(new ChatMessage(ChatRole.Assistant, message.Contents));
+                var message = new ChatMessage
+                {
+                    Role = messageUpdate.Role ?? ChatRole.Assistant,
+                    Contents = messageUpdate.Contents,
+                    MessageId = messageUpdate.MessageId,
+                    RawRepresentation = messageUpdate.RawRepresentation,
+                    AdditionalProperties = messageUpdate.AdditionalProperties
+                };
+                responseMessages.Add(message);
+                if (message.Role == ChatRole.Assistant &&
+                    message.AdditionalProperties is not null &&
+                    message.AdditionalProperties.TryGetValue("ToolCalls", out var toolCalls) &&
+                    toolCalls is IList<object> toolCallList &&
+                    toolCallList.Count > 0)
+                {
+                    // Handle tool call(s)
+                    foreach (var toolCall in toolCallList)
+                    {
+                        // Cast the 'toolCall' object to a dynamic type to access its properties
+                        dynamic dynamicToolCall = toolCall;
+                        if (dynamicToolCall != null)
+                        {
+                            string toolName = dynamicToolCall.Name;
+                            string toolCallId = dynamicToolCall.Id;
+                            string toolArgs = dynamicToolCall.Arguments;
+                            string? toolResult = null;
+
+                            if (toolName == "GetFamily")
+                            {
+                                toolResult = await CallMcpTool(mcpInput, mcpOutput, "GetFamily", new object[] { new { } });
+                            }
+                            // Add more tool handlers as needed
+                            if (toolResult != null)
+                            {
+                                var toolResponse = new ChatMessage(ChatRole.Tool, toolResult);
+                                toolResponse.AdditionalProperties ??= new AdditionalPropertiesDictionary();
+                                toolResponse.AdditionalProperties["ToolCallId"] = toolCallId;
+                                // Add the tool response BEFORE the assistant message with tool_call
+                                conversation.Add(toolResponse); // Add the tool response
+                                conversation.Add(message); // Add the assistant message with tool_call
+                                handledToolCall = true;
+                            }
+                        }
+                    }
+                    break; // After handling tool call, break to continue the loop
+                }
+                else if (message.Role == ChatRole.Assistant)
+                {
+                    if (message.Contents != null && message.Contents.Count > 0 || !string.IsNullOrEmpty(message.Text))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        Console.Write("Assistant: ");
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.WriteLine(message.Contents);
+                        Console.ResetColor();
+                    }
+                    conversation.Add(message);
+                    handledToolCall = false;
+                }
+            }
+            if (!handledToolCall)
+            {
+                break; // If no tool call, exit loop
             }
         }
-
-        Console.ResetColor();
-
         Console.WriteLine();
     }
     catch (Exception ex)
@@ -194,3 +248,27 @@ catch (Exception ex)
     Console.WriteLine($"Error while cleaning up MCP process: {ex.Message}");
 }
 
+// Add this method to your Program.cs file
+static async Task<string> CallMcpTool(StreamWriter mcpInput, StreamReader mcpOutput, string command, object[] args)
+{
+    // Serialize the command and arguments to JSON
+    var request = new
+    {
+        Command = command,
+        Arguments = args
+    };
+    string requestJson = JsonSerializer.Serialize(request);
+
+    // Send the request to the MCP process
+    await mcpInput.WriteLineAsync(requestJson);
+    await mcpInput.FlushAsync();
+
+    // Read the response from the MCP process
+    string? responseJson = await mcpOutput.ReadLineAsync();
+    if (string.IsNullOrWhiteSpace(responseJson))
+    {
+        throw new InvalidOperationException("No response received from MCP process.");
+    }
+
+    return responseJson;
+}
