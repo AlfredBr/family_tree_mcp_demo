@@ -2,7 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using Moq;
 
 namespace FamilyTreeApp;
 
@@ -14,7 +18,10 @@ public class FamilyServiceTests
     [TestInitialize]
     public void Setup()
     {
-        _familyService = new FamilyService();
+        // Initialize the FamilyService with a mock or test logger if needed
+        // For simplicity, we are using a real instance here. In a real test, you might want to mock the logger.
+        var logger = new Mock<ILogger<FamilyService>>();
+        _familyService = new FamilyService(logger.Object);
     }
 
     [TestMethod]

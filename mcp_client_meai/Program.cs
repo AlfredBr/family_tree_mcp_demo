@@ -1,15 +1,15 @@
-﻿using FamilyTreeApp;
-
-using Microsoft.Extensions.AI;
+﻿using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 
-using OpenAI;
-
 using System.Diagnostics;
 using System.Text.Json;
+
+using OpenAI;
+
+using FamilyTreeApp;
 
 // Build configuration
 var builder = Host.CreateDefaultBuilder(args);

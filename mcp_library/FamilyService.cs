@@ -1,16 +1,27 @@
-using System.Net.Http.Json;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 namespace FamilyTreeApp;
+
+#pragma warning disable
 
 public class FamilyService
 {
     private List<Person> _people = new();
+    private readonly ILogger<FamilyService> _logger;
+
+    public FamilyService(ILogger<FamilyService> logger)
+    {
+        _logger = logger;
+    }
 
     public async Task<List<Person>> GetFamily()
     {
+        _logger.LogInformation("Fetching family data from web service...");
+
+        // Check if people.json has already been loaded
         if (_people?.Count > 0)
         {
             return _people;
@@ -37,6 +48,8 @@ public class FamilyService
 
     public async Task<Person?> GetPerson(string id)
     {
+        _logger.LogInformation("Fetching person with ID {Id} from web service...", id);
+
         var people = await GetFamily();
         return people.FirstOrDefault(m =>
             m.Id?.Equals(id, StringComparison.OrdinalIgnoreCase) == true);

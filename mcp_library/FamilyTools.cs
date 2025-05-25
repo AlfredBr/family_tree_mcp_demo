@@ -1,7 +1,7 @@
-﻿using System;
+﻿using ModelContextProtocol.Server;
+
 using System.ComponentModel;
 using System.Text.Json;
-using ModelContextProtocol.Server;
 
 namespace FamilyTreeApp;
 
@@ -15,7 +15,7 @@ public static class FamilyTools
         return JsonSerializer.Serialize(family);
     }
 
-    [McpServerTool, Description("Get a particular member of the family by id.")]
+    [McpServerTool, Description("Get a particular member of the family by id.  Use this tool to retrieve specific family member information.")]
     public static async Task<string?> GetPerson(FamilyService familyService,
         [Description("The id of the person in the family")] string id)
     {

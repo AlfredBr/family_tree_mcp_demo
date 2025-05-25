@@ -1,3 +1,7 @@
+using Microsoft.Extensions.Logging;
+
+using Moq;
+
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -11,7 +15,9 @@ public class FamilyToolsTests
     [TestInitialize]
     public void Setup()
     {
-        _familyService = new FamilyService();
+        // Create a mock or null logger for FamilyService
+        var logger = new Mock<ILogger<FamilyService>>();
+        _familyService = new FamilyService(logger.Object);
     }
 
     [TestMethod]
