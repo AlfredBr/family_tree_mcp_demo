@@ -56,8 +56,9 @@ builder.ConfigureServices(
 
 var host = builder.Build();
 
-// Get services
+// Get the required services
 var kernel = host.Services.GetRequiredService<Kernel>();
+var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
 var familyService = host.Services.GetRequiredService<FamilyService>();
 var logger = host.Services.GetRequiredService<ILogger<Program>>();
 
@@ -65,13 +66,12 @@ var logger = host.Services.GetRequiredService<ILogger<Program>>();
 kernel.Plugins.AddFromObject(new FamilyToolsPlugin(familyService), "FamilyTools");
 logger.LogInformation("Family tools plugin loaded.");
 
-// Get chat completion service
-var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
-
+// Display welcome message
 Console.ForegroundColor = ConsoleColor.Gray;
 Console.WriteLine("🌳 Family Tree Chatbot powered by GPT-4o-mini");
 Console.WriteLine("Ask me anything about the family tree!");
 Console.WriteLine("Type 'exit' to quit.");
+Console.WriteLine();
 Console.WriteLine("Examples:");
 Console.WriteLine("- List all people in the family");
 Console.WriteLine("- Who are the parents of Elizabeth Carter?");
