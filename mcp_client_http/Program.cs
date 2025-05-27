@@ -112,7 +112,7 @@ while (true)
     // create the request body for the OpenAI API and send the request to the API
     var requestBody = new
     {
-        model = "gpt-4o",
+        model = "gpt-4o-mini",
         messages = chatHistory,
         tools = new object[]
         {

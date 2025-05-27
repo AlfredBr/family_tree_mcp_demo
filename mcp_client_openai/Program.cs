@@ -2,6 +2,8 @@
 using System.Text;
 using System.Text.Json;
 
+using FamilyTreeApp;
+
 Console.WriteLine("🌳 Family Tree Chatbot with OpenAI API (type 'exit' to quit)");
 
 // Get OpenAI API key
@@ -84,18 +86,8 @@ var functionToMethodMap = new Dictionary<string, string>
 };
 
 // Define system prompt with pre-prompt instructions
-var prePromptInstructions = new List<string>
-{
-	"You are a helpful assistant that can answer questions about a family tree.",
-	"You have access to family tools that can get information about people and their relationships.",
-	"When users ask about the family, use the available tools to get the information.",
-	"Be conversational and helpful in your responses.",
-	"Do not use Markdown notation in your responses.",
-	"When you give your answer, provide a summary of how you determined that answer.",
-	"Double check your answers before responding.  Assume that you have made a mistake and you need to verify your response.",
-	$"Today's date is {DateTime.Today}."
-};
-var systemPrompt = string.Join(" ", prePromptInstructions);
+
+var systemPrompt = string.Join(" ", Prompt.PrePromptInstructions);
 
 // Initialize chat history
 var chatHistory = new List<Dictionary<string, object>>

@@ -64,17 +64,6 @@ Console.WriteLine("- Get details for person p5.");
 Console.WriteLine();
 Console.ResetColor();
 
-var prePromptInstructions = new List<string>
-{
-    "You are a helpful assistant that can answer questions about a family tree.",
-    "You have access to the GetFamily and GetPerson tools that can get information about people and their relationships.",
-    "When users ask about the family, use the available GetFamily and GetPerson tools to get the information.",
-    "Be conversational and helpful in your responses.",
-    "Do not use Markdown notation in your responses.",
-    "When you give your answer, provide a summary of how you determined that answer.",
-    "Double check your answers before responding.  Assume that you have made a mistake and you need to verify your response.",
-    $"Today's date is {DateTime.Today}.",
-};
 
 // Get logger
 var logger = host.Services.GetRequiredService<ILogger<Program>>();
@@ -83,9 +72,12 @@ var logger = host.Services.GetRequiredService<ILogger<Program>>();
 var openAiClient = host.Services.GetRequiredService<IChatClient>();
 var chatClient = new ChatClientBuilder(openAiClient).UseFunctionInvocation().Build();
 var familyService = host.Services.GetRequiredService<FamilyService>();
+
+// Define local function wrappers for the family tools
 Task<string> GetFamilyAsync() => FamilyTools.GetFamily(familyService);
 Task<string?> GetPersonAsync(string id) => FamilyTools.GetPerson(familyService, id);
 
+// Create chat options with local wrappers of tools
 var chatOptions = new ChatOptions {
     Tools =
     [
@@ -95,7 +87,7 @@ var chatOptions = new ChatOptions {
 };
 
 // Initialize conversation history using Microsoft.Extensions.AI.CharMessage type
-var conversation = new List<ChatMessage> { new(ChatRole.System, string.Join(" ", prePromptInstructions)) };
+var conversation = new List<ChatMessage> { new(ChatRole.System, string.Join(" ", Prompt.PrePromptInstructions)) };
 
 // Start the chat loop
 while (true)

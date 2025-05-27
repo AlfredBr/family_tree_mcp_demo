@@ -80,24 +80,11 @@ Console.WriteLine("- Get details for person p5.");
 Console.WriteLine();
 Console.ResetColor();
 
-// Define the system message as a list of strings
-var prePromptInstructions = new List<string>
-{
-    "You are a helpful assistant that can answer questions about a family tree.",
-    "You have access to family tools that can get information about people and their relationships.",
-    "When users ask about the family, use the available tools to get the information.",
-    "Be conversational and helpful in your responses.",
-    "Do not use Markdown notation in your responses.",
-    "When you give your answer, provide a summary of how you determined that answer.",
-    "Double check your answers before responding.  Assume that you have made a mistake and you need to verify your response.",
-    $"Today's date is {DateTime.Today}.",
-};
-
 // Create a new chat history
 var chatHistory = new ChatHistory();
 
 // add the prePromptInstructions to the chat history as a system message
-chatHistory.AddSystemMessage(string.Join(" ", prePromptInstructions));
+chatHistory.AddSystemMessage(string.Join(" ", Prompt.PrePromptInstructions));
 
 // begin the chat loop
 while (true)
