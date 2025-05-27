@@ -108,10 +108,10 @@ while (true)
 
     var userInput = Console.ReadLine();
 
-    // Check for exit command
-    if (string.IsNullOrWhiteSpace(userInput) || userInput.Equals("exit", StringComparison.CurrentCultureIgnoreCase))
-    {
-        logger.LogInformation("Exiting chat loop.");
+	// Check for exit command
+	if (string.IsNullOrWhiteSpace(userInput) || new[] { "quit", "exit" }.Any(command => string.Equals(command, userInput, StringComparison.CurrentCultureIgnoreCase)))
+	{
+		logger.LogInformation("Exiting chat loop.");
         break;
     }
 
