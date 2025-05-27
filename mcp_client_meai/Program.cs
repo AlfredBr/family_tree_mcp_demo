@@ -152,4 +152,5 @@ while (true)
     }
 }
 
+host.Dispose();
 Console.WriteLine("Goodbye!");
