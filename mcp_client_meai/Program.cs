@@ -83,8 +83,16 @@ var logger = host.Services.GetRequiredService<ILogger<Program>>();
 var openAiClient = host.Services.GetRequiredService<IChatClient>();
 var chatClient = new ChatClientBuilder(openAiClient).UseFunctionInvocation().Build();
 var familyService = host.Services.GetRequiredService<FamilyService>();
-string GetFamily() => FamilyTools.GetFamily(familyService).GetAwaiter().GetResult();
-var chatOptions = new ChatOptions { Tools = [AIFunctionFactory.Create(GetFamily)] };
+Task<string> GetFamilyAsync() => FamilyTools.GetFamily(familyService);
+Task<string?> GetPersonAsync(string id) => FamilyTools.GetPerson(familyService, id);
+
+var chatOptions = new ChatOptions {
+    Tools =
+    [
+        AIFunctionFactory.Create(GetFamilyAsync),
+        AIFunctionFactory.Create((string id) => GetPersonAsync(id))
+    ]
+};
 
 // Initialize conversation history using Microsoft.Extensions.AI.CharMessage type
 var conversation = new List<ChatMessage> { new(ChatRole.System, string.Join(" ", prePromptInstructions)) };
@@ -123,8 +131,7 @@ while (true)
         {
             if (messageUpdate.Role == ChatRole.Assistant)
             {
-                //conversation.Add(messageUpdate.ToChatMessage());
-                //conversation.Add(new ChatMessage(messageUpdate.Role.Value, messageUpdate.Text));
+                conversation.Add(new ChatMessage(ChatRole.Assistant, messageUpdate.Text));
                 responseText.Append(messageUpdate.Text);
             }
         }
@@ -146,18 +153,3 @@ while (true)
 }
 
 Console.WriteLine("Goodbye!");
-
-public static class Extensions
-{
-    public static ChatMessage ToChatMessage(this ChatResponseUpdate update)
-    {
-        return new ChatMessage
-        {
-            Role = update.Role ?? ChatRole.Assistant,
-            Contents = update.Contents,
-            MessageId = update.MessageId,
-            RawRepresentation = update.RawRepresentation,
-            AdditionalProperties = update.AdditionalProperties
-        };
-    }
-}
