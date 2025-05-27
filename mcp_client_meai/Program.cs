@@ -87,7 +87,10 @@ var chatOptions = new ChatOptions {
 };
 
 // Initialize conversation history using Microsoft.Extensions.AI.CharMessage type
-var conversation = new List<ChatMessage> { new(ChatRole.System, string.Join(" ", Prompt.PrePromptInstructions)) };
+var conversation = new List<ChatMessage>();
+
+// Add the pre-prompt instructions to the conversation
+conversation.Add(new ChatMessage(ChatRole.System, string.Join(" ", Prompt.PrePromptInstructions)));
 
 // Start the chat loop
 while (true)
@@ -119,19 +122,22 @@ while (true)
 		// Capture the response text
 		var responseText = new StringBuilder();
 
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.Write("\nAssistant: ");
+        Console.ForegroundColor = ConsoleColor.White;
+
         await foreach (var messageUpdate in chatClient.GetStreamingResponseAsync(conversation, chatOptions, cts.Token))
         {
             if (messageUpdate.Role == ChatRole.Assistant)
             {
                 conversation.Add(new ChatMessage(ChatRole.Assistant, messageUpdate.Text));
-                responseText.Append(messageUpdate.Text);
-            }
+                //responseText.Append(messageUpdate.Text);
+                Console.Write(messageUpdate.Text);
+                await Task.Delay(100);
+			}
         }
 
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.Write("\nAssistant: ");
-        Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine(responseText.ToString());
+        //Console.WriteLine(responseText.ToString());
         Console.ResetColor();
         Console.WriteLine();
     }

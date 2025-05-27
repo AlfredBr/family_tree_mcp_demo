@@ -64,7 +64,7 @@ var logger = host.Services.GetRequiredService<ILogger<Program>>();
 
 // Add the family tools as plugins to the kernel
 kernel.Plugins.AddFromObject(new FamilyToolsPlugin(familyService), "FamilyTools");
-logger.LogInformation("Family tools plugin loaded.");
+logger.LogInformation("FamilyTools plugin loaded.");
 
 // Display welcome message
 Console.ForegroundColor = ConsoleColor.Gray;
@@ -83,17 +83,18 @@ Console.ResetColor();
 // Create a new chat history
 var chatHistory = new ChatHistory();
 
-// add the prePromptInstructions to the chat history as a system message
+// Add the pre-prompt instructions to the chat history as a system message
 chatHistory.AddSystemMessage(string.Join(" ", Prompt.PrePromptInstructions));
 
-// begin the chat loop
+// Begin the chat loop
 while (true)
 {
     Console.ForegroundColor = ConsoleColor.Green;
     Console.Write("You: ");
     Console.ResetColor();
 
-    var userInput = Console.ReadLine();
+	// Read user input message
+	var userInput = Console.ReadLine();
 
 	// Check for exit command
 	if (string.IsNullOrWhiteSpace(userInput) || new[] { "quit", "exit" }.Any(command => string.Equals(command, userInput, StringComparison.CurrentCultureIgnoreCase)))
