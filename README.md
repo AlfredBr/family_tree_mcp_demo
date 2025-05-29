@@ -26,20 +26,28 @@ This project provides a Model Context Protocol (MCP) server for exploring and qu
 
 1. Clone the repository:
    ```sh
-   git clone <your-repo-url>
-   cd mcp
+   git clone https://github.com/AlfredBr/family_tree_mcp_demo.git
    ```
-2. Run the server:
+2. Run the web server that provides the json data:
    ```sh
-   dotnet run --project mcp/mcp.csproj
+   dotnet run --project family_tree_mcp_demo/family_webapi/family_webapi.csproj
    ```
 
-   or
-    ```
+3. Run the Semantic Kernel based client:
+   ```sh
+   dotnet run --project family_tree_mcp_demo/mcp_client_sk/mcp_client_sk.csproj
+   ```
+
+   or the Microsoft.Extensions.AI based client:
+  ```sh
+   dotnet run --project family_tree_mcp_demo/mcp_client_meai/mcp_client_meai.csproj
+   ```
+
+4. Or you can just run the server and use VSCode as your client:
+   ```
    Open 'mcp.json' in VSCode and select 'Start' to start the MCP server
    ```
-
-The server will start and listen for MCP requests as configured in `.vscode/mcp.json`.
+   The server will start and listen for MCP requests as configured in `.vscode/mcp.json`.
 
 ### Testing
 
