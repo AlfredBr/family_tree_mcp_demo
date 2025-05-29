@@ -9,13 +9,14 @@ This project provides a Model Context Protocol (MCP) server for exploring and qu
 - Easily extendable with new tools
 
 ## Project Structure
-- `mcp/` — Main service code
-  - `FamilyService.cs` — Loads and serves family data
-  - `FamilyTools.cs` — MCP tools for querying the family tree
-  - `Person.cs` — Data model for a person
-  - `people.json` — Family data
-- `mcp_tests/` — Unit tests for the service and tools
-- `.vscode/mcp.json` — MCP server configuration
+- `family_tree_mcp_demo/`
+   - `family_webapi/` -- a super simple webservice that returns JSON data
+   - `mcp_client_meai/` -- a MCP client that uses Microsoft.Extensions.AI
+   - `mcp_client_sk/` -- a MCP client that uses Semantic Kernel
+   - `mcp_library/` -- the shared MCP code library
+   - `mcp_tests/` -- Unit tests for the service and tools
+   - `mcp_webapi/` -- not used in the MCP server, but useful for demos.
+- `.vscode/mcp.json` -- MCP server configuration useful when you use VSCode as your client.  Can be adapted to Claude as well.
 
 ## Getting Started
 

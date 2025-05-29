@@ -6,6 +6,10 @@
 # dotenv files
 .env
 
+build.ps1
+start.ps1
+copilot_instructions.md
+
 # User-specific files
 *.rsuser
 *.suo
