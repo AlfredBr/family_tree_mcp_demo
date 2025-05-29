@@ -16,14 +16,16 @@ This project provides a Model Context Protocol (MCP) server for exploring and qu
    - `mcp_library/` -- the shared MCP code library
    - `mcp_tests/` -- Unit tests for the service and tools
    - `mcp_webapi/` -- not used in the MCP server, but useful for demos.
-- `.vscode/mcp.json` -- MCP server configuration useful when you use VSCode as your client.  Can be adapted to Claude as well.
+   - `mcp_server/` -- a console based (stdio) server to use with MCP clients like VSCode/Claude.
+
+Create a `.vscode/mcp.json` MCP server configuration when you use VSCode as your client.  (Can be adapted to Claude as well.)
 
 ## Getting Started
 
 ### Prerequisites
 - [.NET 9.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/9.0)
 
-### Running the MCP Server
+### Running the MCP Client
 
 1. Clone the repository:
    ```sh
