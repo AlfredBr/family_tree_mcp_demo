@@ -482,3 +482,4 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+mcp_client_meai/set_key.ps1

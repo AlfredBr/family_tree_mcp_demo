@@ -78,7 +78,7 @@
       "yearOfBirth": 1995,
       "parents": ["p3", "p7"],
       "spouses": [],
-      "children": []
+      "children": ["p20", "p26", "p28"]
     },
     {
       "id": "p10",
@@ -87,7 +87,7 @@
       "yearOfBirth": 1998,
       "parents": ["p3", "p7"],
       "spouses": [],
-      "children": []
+      "children": ["p21", "p27", "p29"]
     },
     {
       "id": "p11",
@@ -96,7 +96,7 @@
       "yearOfBirth": 2000,
       "parents": ["p4", "p5"],
       "spouses": [],
-      "children": []
+      "children": ["p22"]
     },
     {
       "id": "p12",
@@ -123,7 +123,7 @@
       "yearOfBirth": 2002,
       "parents": ["p6", "p8"],
       "spouses": [],
-      "children": []
+      "children": ["p24", "p25"]
     },
     {
       "id": "p15",
@@ -132,7 +132,7 @@
       "yearOfBirth": 2005,
       "parents": ["p6", "p8"],
       "spouses": [],
-      "children": []
+      "children": ["p23"]
     },
     {
       "id": "p16",
