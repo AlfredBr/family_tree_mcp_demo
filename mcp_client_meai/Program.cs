@@ -1,12 +1,10 @@
-﻿using FamilyTreeApp;
-
+﻿using System.Text;
+using FamilyTreeApp;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
-
-using System.Text;
 
 // Build configuration
 var builder = Host.CreateDefaultBuilder(args);
@@ -16,39 +14,41 @@ var llmModel = "o4-mini";
 // Configure logging
 builder.ConfigureLogging(logging =>
 {
-	logging.ClearProviders();
-	logging.AddSimpleConsole(options =>
-	{
-		options.ColorBehavior = LoggerColorBehavior.Enabled;
-		options.SingleLine = true;
-	});
+    logging.ClearProviders();
+    logging.AddSimpleConsole(options =>
+    {
+        options.ColorBehavior = LoggerColorBehavior.Enabled;
+        options.SingleLine = true;
+    });
 });
 
 // Configure services
 builder.ConfigureServices(
-	(context, services) =>
-	{
-		// Add logging
-		services.AddLogging();
+    (context, services) =>
+    {
+        // Add logging
+        services.AddLogging();
 
-		// Get OpenAI API key
-		string? apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
-		if (string.IsNullOrWhiteSpace(apiKey))
-		{
-			Console.Write("Enter your OpenAI API key: ");
-			apiKey = Console.ReadLine();
-		}
-		if (string.IsNullOrWhiteSpace(apiKey))
-		{
-			// [System.Environment]::SetEnvironmentVariable("OPENAI_API_KEY", "my_api_key_value_from_https://platform.openai.com/settings/organization/api-keys", "User")
-			throw new InvalidOperationException("API key is required.");
-		}
+        // Get OpenAI API key
+        string? apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+        if (string.IsNullOrWhiteSpace(apiKey))
+        {
+            Console.Write("Enter your OpenAI API key: ");
+            apiKey = Console.ReadLine();
+        }
+        if (string.IsNullOrWhiteSpace(apiKey))
+        {
+            // [System.Environment]::SetEnvironmentVariable("OPENAI_API_KEY", "my_api_key_value_from_https://platform.openai.com/settings/organization/api-keys", "User")
+            throw new InvalidOperationException("API key is required.");
+        }
 
-		services.AddSingleton<FamilyService>();
+        services.AddSingleton<FamilyService>();
 
-		// Register ChatClient using Microsoft.Extensions.AI.OpenAI
-		services.AddSingleton<IChatClient>(provider => new OpenAI.Chat.ChatClient(llmModel, apiKey).AsIChatClient());
-	}
+        // Register ChatClient using Microsoft.Extensions.AI.OpenAI
+        services.AddSingleton<IChatClient>(provider =>
+            new OpenAI.Chat.ChatClient(llmModel, apiKey).AsIChatClient()
+        );
+    }
 );
 
 // Build the host
@@ -82,11 +82,11 @@ Task<string?> GetPersonAsync(string id) => FamilyTools.GetPerson(familyService, 
 // Create chat options with local wrappers of tools
 var chatOptions = new ChatOptions
 {
-	Tools =
-	[
-		AIFunctionFactory.Create(GetFamilyAsync),
-		AIFunctionFactory.Create((string id) => GetPersonAsync(id))
-	]
+    Tools =
+    [
+        AIFunctionFactory.Create(GetFamilyAsync),
+        AIFunctionFactory.Create((string id) => GetPersonAsync(id)),
+    ],
 };
 
 // Initialize conversation history
@@ -98,98 +98,113 @@ conversation.Add(new ChatMessage(ChatRole.System, string.Join(" ", Prompt.PrePro
 // Start the chat loop
 while (true)
 {
-	Console.ForegroundColor = ConsoleColor.Green;
-	Console.Write("You: ");
-	Console.ResetColor();
+    Console.ForegroundColor = ConsoleColor.Green;
+    Console.Write("You: ");
+    Console.ResetColor();
 
-	// Read user input
-	var userInput = Console.ReadLine();
+    // Read user input
+    var userInput = Console.ReadLine();
 
-	// the assistant has only 60 seconds timeout to generate a response
-	using var cts = new CancellationTokenSource();
-	cts.CancelAfter(TimeSpan.FromSeconds(60));
+    // the assistant has only 60 seconds timeout to generate a response
+    using var cts = new CancellationTokenSource();
+    cts.CancelAfter(TimeSpan.FromSeconds(60));
 
-	// if the user input is empty, encourage them to ask a question about the family data
-	if (string.IsNullOrWhiteSpace(userInput))
-	{
-		Console.ForegroundColor = ConsoleColor.DarkGray;
-		Console.WriteLine("Assistant is thinking...");
-		Console.ResetColor();
+    // if the user input is empty, encourage them to ask a question about the family data
+    if (string.IsNullOrWhiteSpace(userInput))
+    {
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.WriteLine("Assistant is thinking...");
+        Console.ResetColor();
 
-		var encouragmentPrompt = "Say something funny to encourage the user to ask a question about the family data. " +
-			"Remember, you only know about names, relationships, gender and year of birth. " +
-			"Don't talk about anything else.";
-		var encouragingMessage = new ChatMessage(ChatRole.System, encouragmentPrompt);
-		var encouragingResponse = new StringBuilder();
+        var encouragmentPrompt =
+            "Say something funny to encourage the user to ask a question about the family data. "
+            + "Remember, you only know about names, relationships, gender and year of birth. "
+            + "Don't talk about anything else.";
+        var encouragingMessage = new ChatMessage(ChatRole.System, encouragmentPrompt);
+        var encouragingResponse = new StringBuilder();
 
-		await foreach (var messageUpdate in chatClient.GetStreamingResponseAsync(encouragingMessage, null, cts.Token))
-		{
-			if (messageUpdate.Role == ChatRole.Assistant)
-			{
-				encouragingResponse.Append(messageUpdate.Text);
-			}
-		}
+        await foreach (
+            var messageUpdate in chatClient.GetStreamingResponseAsync(
+                encouragingMessage,
+                null,
+                cts.Token
+            )
+        )
+        {
+            if (messageUpdate.Role == ChatRole.Assistant)
+            {
+                encouragingResponse.Append(messageUpdate.Text);
+            }
+        }
 
-		if (encouragingResponse.Length > 0)
-		{
-			Console.ForegroundColor = ConsoleColor.Cyan;
-			Console.Write("\nAssistant: ");
-			Console.ForegroundColor = ConsoleColor.White;
-			Console.WriteLine(encouragingResponse.ToString().TrimEnd());
-			Console.ResetColor();
-			Console.WriteLine();
-		}
+        if (encouragingResponse.Length > 0)
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("\nAssistant: ");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(encouragingResponse.ToString().TrimEnd());
+            Console.ResetColor();
+            Console.WriteLine();
+        }
 
-		continue;
-	}
+        continue;
+    }
 
-	if (string.Equals("exit", userInput, StringComparison.CurrentCultureIgnoreCase) ||
-		string.Equals("quit", userInput, StringComparison.CurrentCultureIgnoreCase))
-	{
-		// Exit the chat loop
-		logger.LogInformation("Exiting chat loop.");
-		break;
-	}
+    if (
+        string.Equals("exit", userInput, StringComparison.CurrentCultureIgnoreCase)
+        || string.Equals("quit", userInput, StringComparison.CurrentCultureIgnoreCase)
+    )
+    {
+        // Exit the chat loop
+        logger.LogInformation("Exiting chat loop.");
+        break;
+    }
 
-	try
-	{
-		conversation.Add(new ChatMessage(ChatRole.User, userInput));
+    try
+    {
+        conversation.Add(new ChatMessage(ChatRole.User, userInput));
 
-		Console.ForegroundColor = ConsoleColor.DarkGray;
-		Console.WriteLine("Assistant is thinking...");
-		Console.ResetColor();
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.WriteLine("Assistant is thinking...");
+        Console.ResetColor();
 
-		var assistantResponse = new StringBuilder();
+        var assistantResponse = new StringBuilder();
 
-		await foreach (var messageUpdate in chatClient.GetStreamingResponseAsync(conversation, chatOptions, cts.Token))
-		{
-			if (messageUpdate.Role == ChatRole.Assistant)
-			{
-				assistantResponse.Append(messageUpdate.Text);
-			}
-		}
+        await foreach (
+            var messageUpdate in chatClient.GetStreamingResponseAsync(
+                conversation,
+                chatOptions,
+                cts.Token
+            )
+        )
+        {
+            if (messageUpdate.Role == ChatRole.Assistant)
+            {
+                assistantResponse.Append(messageUpdate.Text);
+            }
+        }
 
-		if (assistantResponse.Length > 0)
-		{
-			Console.ForegroundColor = ConsoleColor.Cyan;
-			Console.Write("\nAssistant: ");
-			Console.ForegroundColor = ConsoleColor.White;
+        if (assistantResponse.Length > 0)
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("\nAssistant: ");
+            Console.ForegroundColor = ConsoleColor.White;
 
-			var assistantMessage = assistantResponse.ToString().TrimEnd();
-			conversation.Add(new ChatMessage(ChatRole.Assistant, assistantMessage));
-			Console.Write(assistantMessage);
-		}
+            var assistantMessage = assistantResponse.ToString().TrimEnd();
+            conversation.Add(new ChatMessage(ChatRole.Assistant, assistantMessage));
+            Console.Write(assistantMessage);
+        }
 
-		Console.ResetColor();
-		Console.WriteLine("\n");
-	}
-	catch (Exception ex)
-	{
-		Console.ForegroundColor = ConsoleColor.Red;
-		Console.WriteLine($"Sorry, I encountered an error: {ex.Message}");
-		Console.ResetColor();
-		Console.WriteLine();
-	}
+        Console.ResetColor();
+        Console.WriteLine("\n");
+    }
+    catch (Exception ex)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine($"Sorry, I encountered an error: {ex.Message}");
+        Console.ResetColor();
+        Console.WriteLine();
+    }
 }
 
 host.Dispose(); // Dispose the host to clean up resources

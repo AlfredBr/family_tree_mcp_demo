@@ -22,41 +22,41 @@ var builder = Host.CreateDefaultBuilder(args);
 // Configure logging
 builder.ConfigureLogging(logging =>
 {
-	logging.ClearProviders();
-	logging.AddSimpleConsole(options =>
-	{
-		//options.IncludeScopes = true;
-		//options.TimestampFormat = "yyyy-MM-dd HH:mm:ss ";
-		options.ColorBehavior = LoggerColorBehavior.Enabled; // Corrected namespace usage
-		options.SingleLine = true;
-	});
+    logging.ClearProviders();
+    logging.AddSimpleConsole(options =>
+    {
+        //options.IncludeScopes = true;
+        //options.TimestampFormat = "yyyy-MM-dd HH:mm:ss ";
+        options.ColorBehavior = LoggerColorBehavior.Enabled; // Corrected namespace usage
+        options.SingleLine = true;
+    });
 });
 
 // Configure services
 builder.ConfigureServices(
-	(context, services) =>
-	{
-		// Add configuration for OpenAI API key
-		//var configuration = context.Configuration;
+    (context, services) =>
+    {
+        // Add configuration for OpenAI API key
+        //var configuration = context.Configuration;
 
-		// Add FamilyService
-		services.AddSingleton<FamilyService>();
+        // Add FamilyService
+        services.AddSingleton<FamilyService>();
 
-		// Add Semantic Kernel
-		services.AddKernel();
+        // Add Semantic Kernel
+        services.AddKernel();
 
-		// Get OpenAI API key from environment variable
-		var openAIApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+        // Get OpenAI API key from environment variable
+        var openAIApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
 
-		if (string.IsNullOrEmpty(openAIApiKey))
-		{
-			// [System.Environment]::SetEnvironmentVariable("OPENAI_API_KEY", "my_api_key_value_from_https://platform.openai.com/settings/organization/api-keys", "User")
-			throw new InvalidOperationException("OPENAI_API_KEY environment variable is required");
-		}
+        if (string.IsNullOrEmpty(openAIApiKey))
+        {
+            // [System.Environment]::SetEnvironmentVariable("OPENAI_API_KEY", "my_api_key_value_from_https://platform.openai.com/settings/organization/api-keys", "User")
+            throw new InvalidOperationException("OPENAI_API_KEY environment variable is required");
+        }
 
-		// Configure OpenAI
-		services.AddOpenAIChatCompletion(llmModel, openAIApiKey);
-	}
+        // Configure OpenAI
+        services.AddOpenAIChatCompletion(llmModel, openAIApiKey);
+    }
 );
 
 var host = builder.Build();
@@ -94,64 +94,73 @@ chatHistory.AddSystemMessage(string.Join(" ", Prompt.PrePromptInstructions));
 // Begin the chat loop
 while (true)
 {
-	Console.ForegroundColor = ConsoleColor.Green;
-	Console.Write("You: ");
-	Console.ResetColor();
+    Console.ForegroundColor = ConsoleColor.Green;
+    Console.Write("You: ");
+    Console.ResetColor();
 
-	// Read user input message
-	var userInput = Console.ReadLine();
+    // Read user input message
+    var userInput = Console.ReadLine();
 
-	// Check for exit command
-	if (string.IsNullOrWhiteSpace(userInput))
-	{
-		continue;
-	}
-	if (string.Equals("exit", userInput, StringComparison.CurrentCultureIgnoreCase) ||
-		string.Equals("quit", userInput, StringComparison.CurrentCultureIgnoreCase))
-	{
-		logger.LogInformation("Exiting chat loop.");
-		break;
-	}
+    // Check for exit command
+    if (string.IsNullOrWhiteSpace(userInput))
+    {
+        continue;
+    }
+    if (
+        string.Equals("exit", userInput, StringComparison.CurrentCultureIgnoreCase)
+        || string.Equals("quit", userInput, StringComparison.CurrentCultureIgnoreCase)
+    )
+    {
+        logger.LogInformation("Exiting chat loop.");
+        break;
+    }
 
-	// Add user message to chat history
-	chatHistory.AddUserMessage(userInput);
+    // Add user message to chat history
+    chatHistory.AddUserMessage(userInput);
 
-	try
-	{
-		Console.ForegroundColor = ConsoleColor.DarkGray;
-		Console.WriteLine("Assistant is thinking...");
-		Console.ResetColor();
+    try
+    {
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.WriteLine("Assistant is thinking...");
+        Console.ResetColor();
 
-		// Enable auto function calling (i.e. tool use)
-		var executionSettings = new OpenAIPromptExecutionSettings { FunctionChoiceBehavior = FunctionChoiceBehavior.Auto() };
+        // Enable auto function calling (i.e. tool use)
+        var executionSettings = new OpenAIPromptExecutionSettings
+        {
+            FunctionChoiceBehavior = FunctionChoiceBehavior.Auto(),
+        };
 
-		// Get the chat message content asynchronously
-		var response = await chatCompletionService.GetChatMessageContentAsync(chatHistory, executionSettings, kernel);
+        // Get the chat message content asynchronously
+        var response = await chatCompletionService.GetChatMessageContentAsync(
+            chatHistory,
+            executionSettings,
+            kernel
+        );
 
-		if (response?.Content?.Length > 0)
-		{
-			// Display the assistant's response
-			Console.ForegroundColor = ConsoleColor.Cyan;
-			Console.Write("\nAssistant: ");
-			Console.ForegroundColor = ConsoleColor.White;
-			Console.WriteLine(response.Content);
-			Console.ResetColor();
-			Console.WriteLine();
+        if (response?.Content?.Length > 0)
+        {
+            // Display the assistant's response
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("\nAssistant: ");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(response.Content);
+            Console.ResetColor();
+            Console.WriteLine();
 
-			// Add the assistant's response to the chat history
-			if (response.Content != null)
-			{
-				chatHistory.AddAssistantMessage(response.Content);
-			}
-		}
-	}
-	catch (Exception ex)
-	{
-		Console.ForegroundColor = ConsoleColor.Red;
-		Console.WriteLine($"Error: {ex.Message}");
-		Console.ResetColor();
-		Console.WriteLine();
-	}
+            // Add the assistant's response to the chat history
+            if (response.Content != null)
+            {
+                chatHistory.AddAssistantMessage(response.Content);
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine($"Error: {ex.Message}");
+        Console.ResetColor();
+        Console.WriteLine();
+    }
 }
 
 host.Dispose();
