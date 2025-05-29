@@ -1,12 +1,10 @@
-﻿using Microsoft.Extensions.AI;
+﻿using FamilyTreeApp;
+
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
-
-using System.Text;
-
-using FamilyTreeApp;
 
 // Build configuration
 var builder = Host.CreateDefaultBuilder(args);
@@ -14,38 +12,38 @@ var builder = Host.CreateDefaultBuilder(args);
 // Configure logging
 builder.ConfigureLogging(logging =>
 {
-    logging.ClearProviders();
-    logging.AddSimpleConsole(options =>
-    {
-        options.ColorBehavior = LoggerColorBehavior.Enabled;
-        options.SingleLine = true;
-    });
+	logging.ClearProviders();
+	logging.AddSimpleConsole(options =>
+	{
+		options.ColorBehavior = LoggerColorBehavior.Enabled;
+		options.SingleLine = true;
+	});
 });
 
 // Configure services
 builder.ConfigureServices(
-    (context, services) =>
-    {
-        // Add logging
-        services.AddLogging();
+	(context, services) =>
+	{
+		// Add logging
+		services.AddLogging();
 
-        // Get OpenAI API key
-        string? apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
-        if (string.IsNullOrWhiteSpace(apiKey))
-        {
-            Console.Write("Enter your OpenAI API key: ");
-            apiKey = Console.ReadLine();
-        }
-        if (string.IsNullOrWhiteSpace(apiKey))
-        {
-            throw new InvalidOperationException("API key is required.");
-        }
+		// Get OpenAI API key
+		string? apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+		if (string.IsNullOrWhiteSpace(apiKey))
+		{
+			Console.Write("Enter your OpenAI API key: ");
+			apiKey = Console.ReadLine();
+		}
+		if (string.IsNullOrWhiteSpace(apiKey))
+		{
+			throw new InvalidOperationException("API key is required.");
+		}
 
-        services.AddSingleton<FamilyService>();
+		services.AddSingleton<FamilyService>();
 
-        // Register ChatClient using Microsoft.Extensions.AI.OpenAI
-        services.AddSingleton<IChatClient>(provider => new OpenAI.Chat.ChatClient("gpt-4o-mini", apiKey).AsIChatClient());
-    }
+		// Register ChatClient using Microsoft.Extensions.AI.OpenAI
+		services.AddSingleton<IChatClient>(provider => new OpenAI.Chat.ChatClient("gpt-4o-mini", apiKey).AsIChatClient());
+	}
 );
 
 // Build the host
@@ -64,7 +62,6 @@ Console.WriteLine("- Get details for person p5.");
 Console.WriteLine();
 Console.ResetColor();
 
-
 // Get logger
 var logger = host.Services.GetRequiredService<ILogger<Program>>();
 
@@ -78,12 +75,13 @@ Task<string> GetFamilyAsync() => FamilyTools.GetFamily(familyService);
 Task<string?> GetPersonAsync(string id) => FamilyTools.GetPerson(familyService, id);
 
 // Create chat options with local wrappers of tools
-var chatOptions = new ChatOptions {
-    Tools =
-    [
-        AIFunctionFactory.Create(GetFamilyAsync),
-        AIFunctionFactory.Create((string id) => GetPersonAsync(id))
-    ]
+var chatOptions = new ChatOptions
+{
+	Tools =
+	[
+		AIFunctionFactory.Create(GetFamilyAsync),
+		AIFunctionFactory.Create((string id) => GetPersonAsync(id))
+	]
 };
 
 // Initialize conversation history using Microsoft.Extensions.AI.CharMessage type
@@ -95,55 +93,55 @@ conversation.Add(new ChatMessage(ChatRole.System, string.Join(" ", Prompt.PrePro
 // Start the chat loop
 while (true)
 {
-    Console.ForegroundColor = ConsoleColor.Green;
-    Console.Write("You: ");
-    Console.ResetColor();
+	Console.ForegroundColor = ConsoleColor.Green;
+	Console.Write("You: ");
+	Console.ResetColor();
 
-    // Read user input
-    var userInput = Console.ReadLine();
+	// Read user input
+	var userInput = Console.ReadLine();
 
-    if (string.IsNullOrWhiteSpace(userInput) || new[] { "quit", "exit" }.Any(command => string.Equals(command, userInput, StringComparison.CurrentCultureIgnoreCase)))
-    {
-        // Exit the chat loop
-        logger.LogInformation("Exiting chat loop.");
-        break;
-    }
+	if (string.IsNullOrWhiteSpace(userInput) || new[] { "quit", "exit" }.Any(command => string.Equals(command, userInput, StringComparison.CurrentCultureIgnoreCase)))
+	{
+		// Exit the chat loop
+		logger.LogInformation("Exiting chat loop.");
+		break;
+	}
 
-    try
-    {
-        conversation.Add(new ChatMessage(ChatRole.User, userInput));
+	try
+	{
+		conversation.Add(new ChatMessage(ChatRole.User, userInput));
 
-        Console.WriteLine("Assistant is thinking...");
+		Console.WriteLine("Assistant is thinking...");
 
-        // Set a 60 seconds timeout for cancelation
-        using var cts = new CancellationTokenSource();
-        cts.CancelAfter(TimeSpan.FromSeconds(60));
+		// Set a 60 seconds timeout for cancelation
+		using var cts = new CancellationTokenSource();
+		cts.CancelAfter(TimeSpan.FromSeconds(60));
 
 
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.Write("\nAssistant: ");
-        Console.ForegroundColor = ConsoleColor.White;
+		Console.ForegroundColor = ConsoleColor.Cyan;
+		Console.Write("\nAssistant: ");
+		Console.ForegroundColor = ConsoleColor.White;
 
-        await foreach (var messageUpdate in chatClient.GetStreamingResponseAsync(conversation, chatOptions, cts.Token))
-        {
-            if (messageUpdate.Role == ChatRole.Assistant)
-            {
-                conversation.Add(new ChatMessage(ChatRole.Assistant, messageUpdate.Text));
-                Console.Write(messageUpdate.Text);
-                await Task.Delay(10);
-            }
-        }
+		await foreach (var messageUpdate in chatClient.GetStreamingResponseAsync(conversation, chatOptions, cts.Token))
+		{
+			if (messageUpdate.Role == ChatRole.Assistant)
+			{
+				conversation.Add(new ChatMessage(ChatRole.Assistant, messageUpdate.Text));
+				Console.Write(messageUpdate.Text);
+				await Task.Delay(10);
+			}
+		}
 
-        Console.ResetColor();
-        Console.WriteLine();
-    }
-    catch (Exception ex)
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine($"Sorry, I encountered an error: {ex.Message}");
-        Console.ResetColor();
-        Console.WriteLine();
-    }
+		Console.ResetColor();
+		Console.WriteLine();
+	}
+	catch (Exception ex)
+	{
+		Console.ForegroundColor = ConsoleColor.Red;
+		Console.WriteLine($"Sorry, I encountered an error: {ex.Message}");
+		Console.ResetColor();
+		Console.WriteLine();
+	}
 }
 
 host.Dispose();
