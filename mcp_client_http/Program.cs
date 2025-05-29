@@ -102,7 +102,9 @@ while (true)
 {
     Console.Write("User: ");
     string? userInput = Console.ReadLine();
-    if (string.IsNullOrWhiteSpace(userInput) || userInput.Trim().ToLower() == "exit")
+    if (string.IsNullOrWhiteSpace(userInput) ||
+        userInput.Trim().Equals("exit", StringComparison.CurrentCultureIgnoreCase) ||
+        userInput.Trim().Equals("quit", StringComparison.CurrentCultureIgnoreCase))
     {
         break;
     }
@@ -179,6 +181,7 @@ while (true)
             var function = toolCall.GetProperty("function");
             var name = function.GetProperty("name").GetString()!;
             var arguments = function.GetProperty("arguments").GetRawText();
+
             // Compose full JSON-RPC 2.0 message
             var mcpRequest = JsonSerializer.Serialize(
                 new
@@ -189,8 +192,10 @@ while (true)
                     @params = JsonSerializer.Deserialize<JsonElement>(arguments),
                 }
             );
-            mcpInput.WriteLine(mcpRequest);
-            mcpInput.Flush();
+
+            await mcpInput.WriteLineAsync(mcpRequest);
+            await mcpInput.FlushAsync();
+
             // Read response from MCP server
             string mcpResult = await mcpOutput.ReadLineAsync() ?? "";
             Console.ForegroundColor = ConsoleColor.Yellow;

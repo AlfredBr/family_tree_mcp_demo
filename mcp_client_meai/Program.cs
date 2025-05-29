@@ -41,10 +41,10 @@ builder.ConfigureServices(
             throw new InvalidOperationException("API key is required.");
         }
 
-		services.AddSingleton<FamilyService>();
+        services.AddSingleton<FamilyService>();
 
-		// Register ChatClient using Microsoft.Extensions.AI.OpenAI
-		services.AddSingleton<IChatClient>(provider => new OpenAI.Chat.ChatClient("gpt-4o-mini", apiKey).AsIChatClient());
+        // Register ChatClient using Microsoft.Extensions.AI.OpenAI
+        services.AddSingleton<IChatClient>(provider => new OpenAI.Chat.ChatClient("gpt-4o-mini", apiKey).AsIChatClient());
     }
 );
 
@@ -119,8 +119,6 @@ while (true)
         using var cts = new CancellationTokenSource();
         cts.CancelAfter(TimeSpan.FromSeconds(60));
 
-		// Capture the response text
-		var responseText = new StringBuilder();
 
         Console.ForegroundColor = ConsoleColor.Cyan;
         Console.Write("\nAssistant: ");
@@ -131,13 +129,11 @@ while (true)
             if (messageUpdate.Role == ChatRole.Assistant)
             {
                 conversation.Add(new ChatMessage(ChatRole.Assistant, messageUpdate.Text));
-                //responseText.Append(messageUpdate.Text);
                 Console.Write(messageUpdate.Text);
-                await Task.Delay(100);
-			}
+                await Task.Delay(10);
+            }
         }
 
-        //Console.WriteLine(responseText.ToString());
         Console.ResetColor();
         Console.WriteLine();
     }
