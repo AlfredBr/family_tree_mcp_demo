@@ -1,6 +1,9 @@
 ﻿#pragma warning disable SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 #pragma warning disable S125
 
+// https://platform.openai.com/docs/guides/function-calling?api-mode=responses
+// https://www.youtube.com/watch?v=FLpS7OfD5-s
+
 using FamilyTreeApp;
 //using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
