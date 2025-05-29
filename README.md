@@ -33,13 +33,13 @@ This project provides a Model Context Protocol (MCP) server for exploring and qu
    dotnet run --project family_tree_mcp_demo/family_webapi/family_webapi.csproj
    ```
 
-3. Run the Semantic Kernel based client:
+3. Run the __Semantic Kernel__ based client:
    ```sh
    dotnet run --project family_tree_mcp_demo/mcp_client_sk/mcp_client_sk.csproj
    ```
 
-   or the Microsoft.Extensions.AI based client:
-  ```sh
+   or the __Microsoft.Extensions.AI__ based client:
+   ```sh
    dotnet run --project family_tree_mcp_demo/mcp_client_meai/mcp_client_meai.csproj
    ```
 
