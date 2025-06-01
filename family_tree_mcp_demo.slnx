@@ -7,4 +7,5 @@
   <Project Path="mcp_client_sk/mcp_client_sk.csproj" />
   <Project Path="mcp_client_meai/mcp_client_meai.csproj" />
   <Project Path="mcp_webapi/mcp_webapi.csproj" />
+  <Project Path="models/models.csproj" />
 </Solution>
