@@ -94,4 +94,90 @@ public static class FamilyTools
             return JsonSerializer.Serialize(new { error = ex.Message });
         }
     }
+
+    [McpServerTool, Description("Add a spouse relationship between two family members.")]
+    public static async Task<string> AddSpouse(FamilyService familyService,
+        [Description("The id of the primary person")] string id,
+        [Description("The id of the person to add as a spouse")] string spouseId)
+    {
+        try
+        {
+            // Retrieve both persons
+            var person = await familyService.GetPerson(id);
+            if (person is null)
+            {
+                throw new ArgumentException($"Person with id {id} not found.");
+            }
+
+            var spouse = await familyService.GetPerson(spouseId);
+            if (spouse is null)
+            {
+                throw new ArgumentException($"Person with id {spouseId} not found.");
+            }
+
+            // Update spouse relationships if not already set
+            if (!person.Spouses.Contains(spouseId))
+            {
+                person.Spouses.Add(spouseId);
+            }
+
+            if (!spouse.Spouses.Contains(id))
+            {
+                spouse.Spouses.Add(id);
+            }
+
+            // Update both persons via FamilyService
+            var updatedPerson = await familyService.UpdatePerson(id, person);
+            var updatedSpouse = await familyService.UpdatePerson(spouseId, spouse);
+
+            return JsonSerializer.Serialize(new { person = updatedPerson, spouse = updatedSpouse });
+        }
+        catch (Exception ex)
+        {
+            return JsonSerializer.Serialize(new { error = ex.Message });
+        }
+    }
+
+    [McpServerTool, Description("Add a child relationship to a parent family member.")]
+    public static async Task<string> AddChild(FamilyService familyService,
+        [Description("The id of the parent person")] string parentId,
+        [Description("The id of the person to add as a child")] string childId)
+    {
+        try
+        {
+            // Retrieve both persons
+            var parent = await familyService.GetPerson(parentId);
+            if (parent is null)
+            {
+                throw new ArgumentException($"Parent with id {parentId} not found.");
+            }
+
+            var child = await familyService.GetPerson(childId);
+            if (child is null)
+            {
+                throw new ArgumentException($"Child with id {childId} not found.");
+            }
+
+            // Update child relationships if not already set
+            if (!parent.Children.Contains(childId))
+            {
+                parent.Children.Add(childId);
+            }
+
+            if (!child.Parents.Contains(parentId))
+            {
+                child.Parents.Add(parentId);
+            }
+
+            // Update both persons via FamilyService
+            var updatedParent = await familyService.UpdatePerson(parentId, parent);
+            var updatedChild = await familyService.UpdatePerson(childId, child);
+
+            return JsonSerializer.Serialize(new { parent = updatedParent, child = updatedChild });
+        }
+        catch (Exception ex)
+        {
+            return JsonSerializer.Serialize(new { error = ex.Message });
+        }
+    }
 }

@@ -48,69 +48,69 @@ public class FamilyService
         return people.FirstOrDefault(m =>
             m.Id?.Equals(id, StringComparison.OrdinalIgnoreCase) == true);
     }
-    
+
     public async Task<Person> AddPerson(Person person)
     {
         _logger.LogInformation("Adding new person with ID {Id} to web service...", person.Id);
-        
+
         using var httpClient = new HttpClient();
         var content = new StringContent(
             JsonSerializer.Serialize(person),
             System.Text.Encoding.UTF8,
             "application/json");
-            
+
         var response = await httpClient.PostAsync("http://localhost:5010/person", content);
         response.EnsureSuccessStatusCode();
-        
+
         var resultJson = await response.Content.ReadAsStringAsync();
         var options = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
             Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
         };
-        
+
         var result = JsonSerializer.Deserialize<Person>(resultJson, options);
         if (result == null)
         {
             throw new Exception("Failed to deserialize the created person.");
         }
-        
+
         return result;
     }
-    
+
     public async Task<Person> UpdatePerson(string id, Person person)
     {
         _logger.LogInformation("Updating person with ID {Id} in web service...", id);
-        
+
         using var httpClient = new HttpClient();
         var content = new StringContent(
             JsonSerializer.Serialize(person),
             System.Text.Encoding.UTF8,
             "application/json");
-            
+
         var response = await httpClient.PutAsync($"http://localhost:5010/person/{id}", content);
         response.EnsureSuccessStatusCode();
-        
+
         var resultJson = await response.Content.ReadAsStringAsync();
         var options = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
             Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
         };
-        
+
         var result = JsonSerializer.Deserialize<Person>(resultJson, options);
         if (result == null)
         {
             throw new Exception("Failed to deserialize the updated person.");
         }
-        
+
         return result;
     }
-    
+
     public async Task DeletePerson(string id)
     {
         _logger.LogInformation("Deleting person with ID {Id} from web service...", id);
-        
+
         using var httpClient = new HttpClient();
         var response = await httpClient.DeleteAsync($"http://localhost:5010/person/{id}");
         response.EnsureSuccessStatusCode();
