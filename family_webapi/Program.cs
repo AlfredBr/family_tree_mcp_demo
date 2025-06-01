@@ -209,4 +209,37 @@ app.MapPut("/person/{id}", (string id, Person person) =>
     return Results.Ok(person);
 });
 
+// DELETE /person/{id}
+app.MapDelete("/person/{id}", (string id) =>
+{
+    logger.LogInformation("DELETE /person/{Id} endpoint accessed at {Time}", id, DateTime.Now);
+    var people = ReadPeople();
+    var person = people.FirstOrDefault(p => p.Id == id);
+    if (person == null)
+    {
+        logger.LogWarning("DELETE rejected: Person with id {Id} not found", id);
+        return Results.NotFound();
+    }
+    // Prevent deletion if referenced as a parent
+    var referencedAsParent = people.Any(p => p.Parents.Contains(id));
+    if (referencedAsParent)
+    {
+        logger.LogWarning("DELETE rejected: Person {Id} is referenced as a parent", id);
+        return Results.BadRequest($"Cannot delete: person {id} is referenced as a parent.");
+    }
+    // Remove this person from others' spouses and children
+    foreach (var p in people)
+    {
+        if (p.Spouses.Remove(id))
+            logger.LogInformation("Removed spouse {Id} from person {PersonId}", id, p.Id);
+        if (p.Children.Remove(id))
+            logger.LogInformation("Removed child {Id} from person {PersonId}", id, p.Id);
+    }
+    // Remove the person
+    people.Remove(person);
+    WritePeople(people);
+    logger.LogInformation("Deleted person {Id}", id);
+    return Results.NoContent();
+});
+
 await app.RunAsync();

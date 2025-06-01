@@ -16,3 +16,11 @@ Accept: application/json
 GET {{host}}/person/p2
 Accept: application/json
 
+### Delete person by id (should succeed if not referenced as parent)
+DELETE {{host}}/person/p100
+Accept: application/json
+
+### Delete person by id (should fail if referenced as parent)
+DELETE {{host}}/person/p1
+Accept: application/json
+
