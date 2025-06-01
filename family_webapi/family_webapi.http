@@ -1,6 +1,18 @@
 @host = http://localhost:5010
 
+### Get all people
 GET {{host}}/people
 Accept: application/json
 
-###
+### Get person by non-existent id (should return 404)
+GET {{host}}/person/1
+Accept: application/json
+
+### Get person by id (p1)
+GET {{host}}/person/p1
+Accept: application/json
+
+### Get person by id (p2)
+GET {{host}}/person/p2
+Accept: application/json
+
