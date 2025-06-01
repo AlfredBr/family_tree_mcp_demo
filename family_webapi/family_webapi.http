@@ -24,3 +24,22 @@ Accept: application/json
 DELETE {{host}}/person/p1
 Accept: application/json
 
+### Add a new child to p1 (POST)
+POST {{host}}/person
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": "p200",
+  "name": "New Child of William Carter",
+  "gender": "male",
+  "yearOfBirth": 2025,
+  "parents": ["p1"],
+  "spouses": [],
+  "children": []
+}
+
+### Delete person by id (should fail if referenced as parent)
+DELETE {{host}}/person/p200
+Accept: application/json
+
