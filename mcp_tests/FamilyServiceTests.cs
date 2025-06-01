@@ -64,4 +64,60 @@ public class FamilyServiceTests
         // Assert
         Assert.IsNull(result);
     }
+
+    [TestMethod]
+	public async Task T04_AddPerson_ShouldAddAndReturnPerson()
+	{
+		var testId = "test_addperson";
+		var person = new Person
+		{
+			Id = testId,
+			Name = "Test Add Person",
+			Gender = "male", // Required field
+			YearOfBirth = 1990, // Required field
+			Parents = new List<string>(), // Required field
+			Spouses = new List<string>(), // Required field
+			Children = new List<string>() // Required field
+		};
+
+		await _familyService.AddPerson(person);
+		var fetched = await _familyService.GetPerson(testId);
+		Assert.IsNotNull(fetched);
+		Assert.AreEqual(testId, fetched?.Id);
+        Assert.AreEqual("Test Add Person", fetched?.Name);
+        Assert.AreEqual(1990, fetched?.YearOfBirth);
+        Assert.AreEqual("male", fetched?.Gender, true);
+	}
+
+    [TestMethod]
+    public async Task T05_UpdatePerson()
+    {
+        var testId = "test_addperson";
+		var person = new Person
+		{
+			Id = testId,
+			Name = "Test Add Person",
+			Gender = "female", // Required field
+			YearOfBirth = 1990, // Required field
+			Parents = new List<string>(), // Required field
+			Spouses = new List<string>(), // Required field
+			Children = new List<string>() // Required field
+		};
+		await _familyService.UpdatePerson(testId, person);
+        var fetched = await _familyService.GetPerson(testId);
+        Assert.IsNotNull(fetched);
+		Assert.AreEqual(testId, fetched?.Id);
+		Assert.AreEqual("Test Add Person", fetched?.Name);
+		Assert.AreEqual(1990, fetched?.YearOfBirth);
+		Assert.AreEqual("female", fetched?.Gender, true);
+	}
+
+	[TestMethod]
+    public async Task T06_DeletePerson_ShouldRemovePerson()
+    {
+        var testId = "test_addperson";
+        await _familyService.DeletePerson(testId);
+        var fetched = await _familyService.GetPerson(testId);
+        Assert.IsNull(fetched);
+    }
 }
