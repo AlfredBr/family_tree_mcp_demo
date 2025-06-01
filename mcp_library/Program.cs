@@ -19,8 +19,7 @@ var builder = Host.CreateApplicationBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddSimpleConsole(options =>
 {
-    //options.IncludeScopes = true;
-    //options.TimestampFormat = "yyyy-MM-dd HH:mm:ss ";
+    options.TimestampFormat = "HH:mm:ss ";
     options.ColorBehavior = LoggerColorBehavior.Enabled; // Corrected namespace usage
     options.SingleLine = true;
 });

@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\mcp_library\mcp_library.csproj" />
+    <ProjectReference Include="..\mcp_library\mcp_server.csproj" />
   </ItemGroup>
 
   <ItemGroup>

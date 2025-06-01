@@ -9,22 +9,13 @@
     <PackageReference Include="Microsoft.Extensions.AI" Version="9.5.0" />
     <PackageReference Include="Microsoft.Extensions.AI.Abstractions" Version="9.5.0" />
     <PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="9.5.0-preview.1.25265.7" />
-    <PackageReference
-      Include="Microsoft.Extensions.Configuration"
-      Version="10.0.0-preview.4.25258.110"
-    />
-    <PackageReference
-      Include="Microsoft.Extensions.Configuration.UserSecrets"
-      Version="10.0.0-preview.4.25258.110"
-    />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0-preview.4.25258.110" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="10.0.0-preview.4.25258.110" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0-preview.4.25258.110" />
-    <PackageReference
-      Include="Microsoft.Extensions.DependencyInjection"
-      Version="10.0.0-preview.4.25258.110"
-    />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0-preview.4.25258.110" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.0-preview.4.25258.110" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\mcp_library\mcp_library.csproj" />
+    <ProjectReference Include="..\mcp_library\mcp_server.csproj" />
   </ItemGroup>
 </Project>

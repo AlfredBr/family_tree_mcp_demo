@@ -13,6 +13,6 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0-preview.4.25258.110" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\mcp_library\mcp_library.csproj" />
+    <ProjectReference Include="..\mcp_library\mcp_server.csproj" />
   </ItemGroup>
 </Project>

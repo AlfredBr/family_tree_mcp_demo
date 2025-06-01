@@ -9,7 +9,6 @@ namespace FamilyTreeApp;
 
 public class FamilyService
 {
-    private List<Person> _people = new();
     private readonly ILogger<FamilyService> _logger;
 
     public FamilyService(ILogger<FamilyService> logger)
@@ -21,12 +20,6 @@ public class FamilyService
     {
         _logger.LogInformation("Fetching family data from web service...");
 
-        // Check if people.json has already been loaded
-        if (_people?.Count > 0)
-        {
-            return _people;
-        }
-
         // Fetch people.json from the web service
         using var httpClient = new HttpClient();
         var response = await httpClient.GetAsync("http://localhost:5010/people");
@@ -37,13 +30,14 @@ public class FamilyService
             PropertyNameCaseInsensitive = true,
             Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) },
         };
-        _people = JsonSerializer.Deserialize<List<Person>>(peopleJson, options) ?? new List<Person>();
 
-        if (_people.Count == 0)
+        var people = JsonSerializer.Deserialize<List<Person>>(peopleJson, options) ?? new List<Person>();
+
+        if (people.Count == 0)
         {
             throw new Exception("No people found in the JSON file.");
         }
-        return _people;
+        return people;
     }
 
     public async Task<Person?> GetPerson(string id)

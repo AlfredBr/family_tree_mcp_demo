@@ -21,8 +21,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet(
-        "/family",
+app.MapGet("/family",
         async (FamilyService familyService) =>
         {
             var people = await familyService.GetFamily();
@@ -32,8 +31,7 @@ app.MapGet(
     .WithName("GetFamily")
     .WithOpenApi();
 
-app.MapGet(
-        "/family/{id}",
+app.MapGet("/family/{id}",
         async (FamilyService familyService, string id) =>
         {
             var person = await familyService.GetPerson(id);
@@ -43,4 +41,4 @@ app.MapGet(
     .WithName("GetPerson")
     .WithOpenApi();
 
-app.Run();
+await app.RunAsync();
