@@ -76,7 +76,7 @@ void UpdateRelationships(List<Person> people, Person person, Person? oldPerson =
             if (parent != null && parent.Children.Contains(oldPerson.Id))
             {
                 parent.Children.Remove(oldPerson.Id);
-                logger.LogInformation("Removed child {ChildId} from parent {ParentId}", oldPerson.Id, parentId);
+                logger.LogInformation("Removed child '{ChildId}' from parent '{ParentId}'", oldPerson.Id, parentId);
             }
         }
         // Remove this person from old spouses' spouses
@@ -86,7 +86,7 @@ void UpdateRelationships(List<Person> people, Person person, Person? oldPerson =
             if (spouse != null && spouse.Spouses.Contains(oldPerson.Id))
             {
                 spouse.Spouses.Remove(oldPerson.Id);
-                logger.LogInformation("Removed spouse {SpouseId} from spouse {PersonId}", oldPerson.Id, spouseId);
+                logger.LogInformation("Removed spouse '{SpouseId}' from spouse '{PersonId}'", oldPerson.Id, spouseId);
             }
         }
         // Remove this person from old children's parents
@@ -96,7 +96,7 @@ void UpdateRelationships(List<Person> people, Person person, Person? oldPerson =
             if (child != null && child.Parents.Contains(oldPerson.Id))
             {
                 child.Parents.Remove(oldPerson.Id);
-                logger.LogInformation("Removed parent {ParentId} from child {ChildId}", oldPerson.Id, childId);
+                logger.LogInformation("Removed parent '{ParentId}' from child '{ChildId}'", oldPerson.Id, childId);
             }
         }
     }
@@ -107,7 +107,7 @@ void UpdateRelationships(List<Person> people, Person person, Person? oldPerson =
         if (parent != null && !parent.Children.Contains(person.Id))
         {
             parent.Children.Add(person.Id);
-            logger.LogInformation("Added child {ChildId} to parent {ParentId}", person.Id, parentId);
+            logger.LogInformation("Added child '{ChildId}' to parent '{ParentId}'", person.Id, parentId);
         }
     }
     foreach (var spouseId in person.Spouses)
@@ -116,7 +116,7 @@ void UpdateRelationships(List<Person> people, Person person, Person? oldPerson =
         if (spouse != null && !spouse.Spouses.Contains(person.Id))
         {
             spouse.Spouses.Add(person.Id);
-            logger.LogInformation("Added spouse {SpouseId} to spouse {PersonId}", person.Id, spouseId);
+            logger.LogInformation("Added spouse '{SpouseId}' to spouse '{PersonId}'", person.Id, spouseId);
         }
     }
     foreach (var childId in person.Children)
@@ -125,7 +125,7 @@ void UpdateRelationships(List<Person> people, Person person, Person? oldPerson =
         if (child != null && !child.Parents.Contains(person.Id))
         {
             child.Parents.Add(person.Id);
-            logger.LogInformation("Added parent {ParentId} to child {ChildId}", person.Id, childId);
+            logger.LogInformation("Added parent '{ParentId}' to child '{ChildId}'", person.Id, childId);
         }
     }
 }
@@ -146,10 +146,10 @@ app.MapGet("/person/{id}", (string id) =>
     var person = people.FirstOrDefault(p => p.Id == id);
     if (person == null)
     {
-        logger.LogWarning("Person with id {Id} not found", id);
+        logger.LogWarning("Person with id '{Id}' not found", id);
         return Results.NotFound();
     }
-    logger.LogInformation("Found Person with id {Id} -> {Name}", id, person.Name);
+    logger.LogInformation("Found Person with id '{Id}' -> {Name}", id, person.Name);
     return Results.Json(person);
 });
 
@@ -160,7 +160,7 @@ app.MapPost("/person", (Person person) =>
     var people = ReadPeople();
     if (people.Any(p => p.Id == person.Id))
     {
-        logger.LogWarning("POST rejected: Person with id {Id} already exists", person.Id);
+        logger.LogWarning("POST rejected: Person with id '{Id}' already exists", person.Id);
         return Results.Conflict($"Person with id {person.Id} already exists.");
     }
     // Validate referenced IDs
@@ -168,14 +168,14 @@ app.MapPost("/person", (Person person) =>
     {
         if (!string.IsNullOrWhiteSpace(pid) && !people.Any(p => p.Id == pid))
         {
-            logger.LogWarning("POST rejected: Referenced id {RefId} does not exist", pid);
-            return Results.BadRequest($"Referenced id {pid} does not exist.");
+            logger.LogWarning("POST rejected: Referenced id '{RefId}' does not exist", pid);
+            return Results.BadRequest($"Referenced id '{pid}' does not exist.");
         }
     }
     people.Add(person);
     UpdateRelationships(people, person);
     WritePeople(people);
-    logger.LogInformation("Added person {Id}", person.Id);
+    logger.LogInformation("Added person '{Id}'", person.Id);
     return Results.Created($"/person/{person.Id}", person);
 });
 
@@ -187,7 +187,7 @@ app.MapPut("/person/{id}", (string id, Person person) =>
     var existing = people.FirstOrDefault(p => p.Id == id);
     if (existing == null)
     {
-        logger.LogWarning("PUT rejected: Person with id {Id} not found", id);
+        logger.LogWarning("PUT rejected: Person with id '{Id}' not found", id);
         return Results.NotFound();
     }
     // Validate referenced IDs
@@ -195,8 +195,8 @@ app.MapPut("/person/{id}", (string id, Person person) =>
     {
         if (!string.IsNullOrWhiteSpace(pid) && !people.Any(p => p.Id == pid))
         {
-            logger.LogWarning("PUT rejected: Referenced id {RefId} does not exist", pid);
-            return Results.BadRequest($"Referenced id {pid} does not exist.");
+            logger.LogWarning("PUT rejected: Referenced id '{RefId}' does not exist", pid);
+            return Results.BadRequest($"Referenced id '{pid}' does not exist.");
         }
     }
     // Remove old relationships, update with new
@@ -205,7 +205,7 @@ app.MapPut("/person/{id}", (string id, Person person) =>
     var idx = people.FindIndex(p => p.Id == id);
     people[idx] = person;
     WritePeople(people);
-    logger.LogInformation("Updated person {Id}", id);
+    logger.LogInformation("Updated person '{Id}'", id);
     return Results.Ok(person);
 });
 
@@ -217,28 +217,28 @@ app.MapDelete("/person/{id}", (string id) =>
     var person = people.FirstOrDefault(p => p.Id == id);
     if (person == null)
     {
-        logger.LogWarning("DELETE rejected: Person with id {Id} not found", id);
+        logger.LogWarning("DELETE rejected: Person with id '{Id}' not found", id);
         return Results.NotFound();
     }
     // Prevent deletion if referenced as a parent
     var referencedAsParent = people.Any(p => p.Parents.Contains(id));
     if (referencedAsParent)
     {
-        logger.LogWarning("DELETE rejected: Person {Id} is referenced as a parent", id);
-        return Results.BadRequest($"Cannot delete: person {id} is referenced as a parent.");
+        logger.LogWarning("DELETE rejected: Person '{Id}' is referenced as a parent", id);
+        return Results.BadRequest($"Cannot delete: person '{id}' is referenced as a parent.");
     }
     // Remove this person from others' spouses and children
     foreach (var p in people)
     {
         if (p.Spouses.Remove(id))
-            logger.LogInformation("Removed spouse {Id} from person {PersonId}", id, p.Id);
+            logger.LogInformation("Removed spouse '{Id}' from person '{PersonId}'", id, p.Id);
         if (p.Children.Remove(id))
-            logger.LogInformation("Removed child {Id} from person {PersonId}", id, p.Id);
+            logger.LogInformation("Removed child '{Id}' from person '{PersonId}'", id, p.Id);
     }
     // Remove the person
     people.Remove(person);
     WritePeople(people);
-    logger.LogInformation("Deleted person {Id}", id);
+    logger.LogInformation("Deleted person '{Id}'", id);
     return Results.NoContent();
 });
 
