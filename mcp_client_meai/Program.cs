@@ -78,6 +78,12 @@ var familyService = host.Services.GetRequiredService<FamilyService>();
 // Define local function wrappers for the family tools
 Task<string> GetFamilyAsync() => FamilyTools.GetFamily(familyService);
 Task<string?> GetPersonAsync(string id) => FamilyTools.GetPerson(familyService, id);
+Task<string> AddPersonAsync(string personJson) => FamilyTools.AddPerson(familyService, personJson);
+Task<string> UpdatePersonAsync(string id, string personJson) => FamilyTools.UpdatePerson(familyService, id, personJson);
+Task<string> DeletePersonAsync(string id) => FamilyTools.DeletePerson(familyService, id);
+Task<string> AddSpouseAsync(string id, string spouseId) => FamilyTools.AddSpouse(familyService, id, spouseId);
+Task<string> AddChildAsync(string id, string childId) => FamilyTools.AddChild(familyService, id, childId);
+
 
 // Create chat options with local wrappers of tools
 var chatOptions = new ChatOptions
@@ -86,7 +92,12 @@ var chatOptions = new ChatOptions
     [
         AIFunctionFactory.Create(GetFamilyAsync),
         AIFunctionFactory.Create((string id) => GetPersonAsync(id)),
-    ],
+        AIFunctionFactory.Create((string person) => AddPersonAsync(person)),
+        AIFunctionFactory.Create((string id, string personJson) => UpdatePersonAsync(id, personJson)),
+        AIFunctionFactory.Create((string id) => DeletePersonAsync(id)),
+        AIFunctionFactory.Create((string id, string spouseId) => AddSpouseAsync(id, spouseId)),
+        AIFunctionFactory.Create((string id, string childId) => AddChildAsync(id, childId)),
+	],
 };
 
 // Initialize conversation history
