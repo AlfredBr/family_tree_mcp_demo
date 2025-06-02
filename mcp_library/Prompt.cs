@@ -14,7 +14,8 @@ public static class Prompt
 			"Double check your answers before responding.  Always assume that you have made a mistake and you must verify your response.",
 			"Keep track of previous interactions to improve responses.",
 			"Be sure to save your changes to the family data after answering a question.",
-			"All ids are unique and can be used to identify people in the family tree.",
+			"When making changes to the data, always ensure that the data remains consistent and valid.",
+            "All ids are unique and can be used to identify people in the family tree.",
 			"All ids are strings, not integers and begin with the letter p followed by a number.",
 			$"Today's date is {DateTime.Today}."
 		};
