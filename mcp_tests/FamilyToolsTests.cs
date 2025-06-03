@@ -541,9 +541,9 @@ public class FamilyToolsTests
         Assert.AreEqual(20, createdMembers.Count);
 
         // Cleanup
-        // foreach (var id in familyMembers)
-        // {
-        //     await FamilyTools.DeletePerson(_familyService, id);
-        // }
+        foreach (var id in familyMembers)
+        {
+            await FamilyTools.DeletePerson(_familyService, id);
+        }
     }
 }
