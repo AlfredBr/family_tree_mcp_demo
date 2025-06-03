@@ -3,6 +3,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 
+var llmModel = "o4-mini";
+
 Console.WriteLine("FamilyTools MCP Chat Client (type 'exit' to quit)");
 
 // Prompt for OpenAI API key if not set in environment
@@ -20,20 +22,20 @@ if (string.IsNullOrWhiteSpace(apiKey))
 }
 
 // path to the MCP library project
-var mcpLibraryProject = Path.Combine(
+var mcpServerProject = Path.Combine(
     AppContext.BaseDirectory,
     "..",
     "..",
     "..",
     "..",
-    "mcp_library",
-    "mcp_library.csproj"
+    "mcp_server",
+    "mcp_server.csproj"
 );
 
 // Check if the MCP library project exists
-if (!File.Exists(mcpLibraryProject))
+if (!File.Exists(mcpServerProject))
 {
-    Console.WriteLine($"MCP library project not found at {mcpLibraryProject}.");
+    Console.WriteLine($"MCP library project not found at {mcpServerProject}.");
     return;
 }
 
@@ -43,7 +45,7 @@ var mcpProcess = new System.Diagnostics.Process
     StartInfo = new System.Diagnostics.ProcessStartInfo
     {
         FileName = "dotnet",
-        Arguments = $"run --project \"{mcpLibraryProject}\"",
+        Arguments = $"run --project \"{mcpServerProject}\"",
         RedirectStandardInput = true,
         RedirectStandardOutput = true,
         RedirectStandardError = true,
@@ -87,9 +89,7 @@ var httpClient = new HttpClient();
 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 
 // this is the system prompt for the assistant
-string systemPrompt =
-    "You are a helpful assistant with access to a family tree via MCP tools. "
-    + "Use the available tools to answer questions about the family.";
+var systemPrompt = string.Join(" ", Prompt.PrePromptInstructions);
 
 // initialize the chat history with the system prompt
 var chatHistory = new List<Dictionary<string, object>>
@@ -100,10 +100,17 @@ var chatHistory = new List<Dictionary<string, object>>
 // begin the chat loop between the user and the assistant
 while (true)
 {
-    Console.Write("User: ");
+    Console.ForegroundColor = ConsoleColor.Green;
+    Console.Write("You: ");
+    Console.ResetColor();
+
+    // read user input from the console
     string? userInput = Console.ReadLine();
-    if (string.IsNullOrWhiteSpace(userInput) ||
-        userInput.Trim().Equals("exit", StringComparison.CurrentCultureIgnoreCase) ||
+    if (string.IsNullOrWhiteSpace(userInput))
+    {
+        continue;
+    }
+    if (userInput.Trim().Equals("exit", StringComparison.CurrentCultureIgnoreCase) ||
         userInput.Trim().Equals("quit", StringComparison.CurrentCultureIgnoreCase))
     {
         break;
@@ -114,7 +121,7 @@ while (true)
     // create the request body for the OpenAI API and send the request to the API
     var requestBody = new
     {
-        model = "gpt-4o-mini",
+        model = llmModel,
         messages = chatHistory,
         tools = new object[]
         {
@@ -235,7 +242,7 @@ while (true)
         chatHistory.AddRange(toolResults);
         // Re-ask OpenAI for a final answer with tool results
         var followupContent = new StringContent(
-            JsonSerializer.Serialize(new { model = "gpt-4o", messages = chatHistory }),
+            JsonSerializer.Serialize(new { model = llmModel, messages = chatHistory }),
             Encoding.UTF8,
             "application/json"
         );
@@ -248,7 +255,14 @@ while (true)
         var followupChoices = followupDoc.RootElement.GetProperty("choices");
         var followupMessage = followupChoices[0].GetProperty("message");
         var finalContent = followupMessage.GetProperty("content").GetString()!;
-        Console.WriteLine($"Assistant: {finalContent}\n");
+
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine($"\nAssistant: ");
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine($"{finalContent}\n");
+        Console.ResetColor();
+
+        // Add final answer to chat history
         chatHistory.Add(new() { ["role"] = "assistant", ["content"] = finalContent });
     }
     else
