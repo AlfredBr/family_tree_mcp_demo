@@ -322,6 +322,10 @@ while (true)
 					continue;
 				}
 
+				Console.ForegroundColor = ConsoleColor.Magenta;
+				Console.WriteLine($"Calling tool: {openAiName} (MCP method: {mcpMethodName}) with ID '{toolCallId}' and Arguments: {arguments}");
+				Console.ResetColor();
+
 				// Create JSON-RPC request for MCP
 				var mcpRequest = JsonSerializer.Serialize(
 					new
@@ -372,7 +376,7 @@ while (true)
 			// Get final response from OpenAI with tool results
 			var followupRequestBody = new
 			{
-				model = "gpt-4o",
+				model = llmModel,
 				messages = chatHistory
 			};
 
@@ -394,7 +398,9 @@ while (true)
 			var finalContent = followupMessage.GetProperty("content").GetString()!;
 
 			Console.ForegroundColor = ConsoleColor.Cyan;
-			Console.WriteLine($"\nAssistant: {finalContent}");
+			Console.Write($"\nAssistant: ");
+			Console.ForegroundColor = ConsoleColor.White;
+			Console.WriteLine($"{finalContent}");
 			Console.ResetColor();
 
 			chatHistory.Add(new() { ["role"] = "assistant", ["content"] = finalContent });
