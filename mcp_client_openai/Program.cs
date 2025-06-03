@@ -4,7 +4,20 @@ using System.Text.Json;
 
 using FamilyTreeApp;
 
-Console.WriteLine("🌳 Family Tree Chatbot with OpenAI API (type 'exit' to quit)");
+var llmModel = "o4-mini";
+
+Console.ForegroundColor = ConsoleColor.Gray;
+Console.WriteLine($"🌳 Family Tree Chatbot powered by {llmModel}");
+Console.WriteLine("Ask me anything about the family tree!");
+Console.WriteLine("Type 'exit' to quit.");
+Console.WriteLine();
+Console.WriteLine("Examples:");
+Console.WriteLine("- List all people in the family");
+Console.WriteLine("- Who are the parents of Elizabeth Carter?");
+Console.WriteLine("- What is the relationship between Emily Smith and William Carter?");
+Console.WriteLine("- Get details for person p5.");
+Console.WriteLine();
+Console.ResetColor();
 
 // Get OpenAI API key
 string? apiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
@@ -106,21 +119,34 @@ Console.WriteLine();
 // Chat loop
 while (true)
 {
+	Console.ForegroundColor = ConsoleColor.Green;
 	Console.Write("You: ");
+	Console.ResetColor();
+
+	// Read user input
 	string? userInput = Console.ReadLine();
-	if (string.IsNullOrWhiteSpace(userInput) || userInput.Trim().Equals("exit", StringComparison.OrdinalIgnoreCase))
+	if (string.IsNullOrWhiteSpace(userInput))
+	{
+		continue;
+	}
+	if (userInput.Trim().Equals("exit", StringComparison.OrdinalIgnoreCase) ||
+		userInput.Trim().Equals("quit", StringComparison.OrdinalIgnoreCase))
+	{
 		break;
+	}
 
 	chatHistory.Add(new() { ["role"] = "user", ["content"] = userInput });
 
+	Console.ForegroundColor = ConsoleColor.DarkGray;
 	Console.WriteLine("Assistant is thinking...");
+	Console.ResetColor();
 
 	try
 	{
 		// Create request body for OpenAI API
 		var requestBody = new
 		{
-			model = "gpt-4o",
+			model = llmModel,
 			messages = chatHistory,
 			tools = new object[]
 			{
