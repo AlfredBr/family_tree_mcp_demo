@@ -21,18 +21,18 @@ if (string.IsNullOrWhiteSpace(apiKey))
 }
 
 // get the path to the mcp_library project
-var mcpLibraryProject = Path.Combine(
+var mcpServerProject = Path.Combine(
 	AppContext.BaseDirectory,
 	"..",
 	"..",
 	"..",
 	"..",
-	"mcp_library",
-	"mcp_library.csproj"
+	"mcp_server",
+	"mcp_server.csproj"
 );
-if (!File.Exists(mcpLibraryProject))
+if (!File.Exists(mcpServerProject))
 {
-	Console.WriteLine($"MCP library project not found at {mcpLibraryProject}.");
+	Console.WriteLine($"MCP library project not found at {mcpServerProject}.");
 	return;
 }
 
@@ -42,7 +42,7 @@ var mcpProcess = new System.Diagnostics.Process
 	StartInfo = new System.Diagnostics.ProcessStartInfo
 	{
 		FileName = "dotnet",
-		Arguments = $"run --project \"{mcpLibraryProject}\"",
+		Arguments = $"run --project \"{mcpServerProject}\"",
 		RedirectStandardInput = true,
 		RedirectStandardOutput = true,
 		RedirectStandardError = true,
