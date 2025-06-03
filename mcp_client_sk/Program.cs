@@ -25,9 +25,8 @@ builder.ConfigureLogging(logging =>
     logging.ClearProviders();
     logging.AddSimpleConsole(options =>
     {
-        //options.IncludeScopes = true;
-        //options.TimestampFormat = "yyyy-MM-dd HH:mm:ss ";
-        options.ColorBehavior = LoggerColorBehavior.Enabled; // Corrected namespace usage
+        //options.TimestampFormat = "HH:mm:ss ";
+        options.ColorBehavior = LoggerColorBehavior.Enabled;
         options.SingleLine = true;
     });
 });
@@ -106,10 +105,8 @@ while (true)
     {
         continue;
     }
-    if (
-        string.Equals("exit", userInput, StringComparison.CurrentCultureIgnoreCase)
-        || string.Equals("quit", userInput, StringComparison.CurrentCultureIgnoreCase)
-    )
+    if (string.Equals("exit", userInput, StringComparison.CurrentCultureIgnoreCase) ||
+        string.Equals("quit", userInput, StringComparison.CurrentCultureIgnoreCase))
     {
         logger.LogInformation("Exiting chat loop.");
         break;
