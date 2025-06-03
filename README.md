@@ -1,6 +1,6 @@
 # Family Tree MCP Demo
 
-This project provides a Model Context Protocol (MCP) server for exploring and querying a family tree. It is implemented in C# using .NET, and exposes tools for retrieving family members and their relationships.
+This project provides a Model Context Protocol (MCP) server for exploring and querying a ficticious family tree. It is implemented in C# using .NET, and exposes tools for retrieving/adding/updating family members and their relationships.
 
 ## Features
 - List all people in the family tree
@@ -11,14 +11,30 @@ This project provides a Model Context Protocol (MCP) server for exploring and qu
 ## Project Structure
 - `family_tree_mcp_demo/`
    - `family_webapi/` -- a super simple webservice that returns JSON data
+   - `mcp_server/` -- a console based (stdio) server to use with MCP clients like VSCode/Claude.
    - `mcp_client_meai/` -- a MCP client that uses Microsoft.Extensions.AI
    - `mcp_client_sk/` -- a MCP client that uses Semantic Kernel
-   - `mcp_library/` -- the shared MCP code library
-   - `mcp_tests/` -- Unit tests for the service and tools
+   - `mcp_tests/` -- unit tests for the service and tools
    - `mcp_webapi/` -- not used in the MCP server, but useful for demos.
-   - `mcp_server/` -- a console based (stdio) server to use with MCP clients like VSCode/Claude.
 
 Create a `.vscode/mcp.json` MCP server configuration when you use VSCode as your client.  (Can be adapted to Claude as well.)
+
+```json
+{
+    "servers": {
+        "my-mcp-server-abc123": {
+            "type": "stdio",
+            "command": "dotnet",
+            "args": [
+                "run",
+                "--project",
+                "<your_path>\\mcp_server\\mcp_server.csproj"
+            ]
+        }
+    }
+}
+```
+
 
 ## Getting Started
 
