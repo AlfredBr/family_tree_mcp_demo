@@ -9,6 +9,6 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\mcp_library\mcp_server.csproj" />
+    <ProjectReference Include="..\mcp_server\mcp_server.csproj" />
   </ItemGroup>
 </Project>

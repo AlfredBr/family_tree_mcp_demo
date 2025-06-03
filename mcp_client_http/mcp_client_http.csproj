@@ -6,6 +6,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\mcp_library\mcp_library.csproj" />
+    <ProjectReference Include="..\mcp_server\mcp_server.csproj" />
   </ItemGroup>
 </Project>

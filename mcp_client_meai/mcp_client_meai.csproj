@@ -16,6 +16,6 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.0-preview.4.25258.110" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\mcp_library\mcp_server.csproj" />
+    <ProjectReference Include="..\mcp_server\mcp_server.csproj" />
   </ItemGroup>
 </Project>
