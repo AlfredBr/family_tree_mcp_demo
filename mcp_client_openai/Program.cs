@@ -95,7 +95,12 @@ httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("
 var functionToMethodMap = new Dictionary<string, string>
 {
 	{ "GetFamily", "FamilyTreeApp.FamilyTools.GetFamily" },
-	{ "GetPerson", "FamilyTreeApp.FamilyTools.GetPerson" }
+	{ "GetPerson", "FamilyTreeApp.FamilyTools.GetPerson" },
+	{ "AddPerson", "FamilyTreeApp.FamilyTools.AddPerson" },
+	{ "UpdatePerson", "FamilyTreeApp.FamilyTools.UpdatePerson" },
+	{ "DeletePerson", "FamilyTreeApp.FamilyTools.DeletePerson" },
+	{ "AddSpouse", "FamilyTreeApp.FamilyTools.AddSpouse" },
+	{ "AddChild", "FamilyTreeApp.FamilyTools.AddChild" }
 };
 
 // Define system prompt with pre-prompt instructions
@@ -156,7 +161,7 @@ while (true)
 					function = new
 					{
 						name = "GetFamily",
-						description = "Get a list of people in a family.",
+						description = "Get a list of all of the people in a family.",
 						parameters = new { type = "object", properties = new { } },
 					},
 				},
@@ -166,22 +171,111 @@ while (true)
 					function = new
 					{
 						name = "GetPerson",
-						description = "Get a member of the family by id.",
+						description = "Get a particular member of the family by id.",
 						parameters = new
 						{
 							type = "object",
 							properties = new
 							{
-								id = new
-								{
-									type = "string",
-									description = "The ID of the person to retrieve.",
-								},
+								id = new { type = "string", description = "The id of the person in the family" }
 							},
-							required = new[] { "id" },
-						},
+							required = new[] { "id" }
+						}
 					},
 				},
+				new
+				{
+					type = "function",
+					function = new
+					{
+						name = "AddPerson",
+						description = "Add a new person to the family. This creates a new family member record.",
+						parameters = new
+						{
+							type = "object",
+							properties = new
+							{
+								personJson = new { type = "string", description = "The JSON representation of the person to add." }
+							},
+							required = new[] { "personJson" }
+						}
+					},
+				},
+				new
+				{
+					type = "function",
+					function = new
+					{
+						name = "UpdatePerson",
+						description = "Update an existing person in the family. This modifies the details of a family member.",
+						parameters = new
+						{
+							type = "object",
+							properties = new
+							{
+								id = new { type = "string", description = "The id of the person to update" },
+								personJson = new { type = "string", description = "The JSON representation of the updated person." }
+							},
+							required = new[] { "id", "personJson" }
+						}
+					},
+				},
+				new
+				{
+					type = "function",
+					function = new
+					{
+						name = "DeletePerson",
+						description = "Delete a person from the family. This removes a family member record completely.",
+						parameters = new
+						{
+							type = "object",
+							properties = new
+							{
+								id = new { type = "string", description = "The id of the person to delete" }
+							},
+							required = new[] { "id" }
+						}
+					},
+				},
+				new
+				{
+					type = "function",
+					function = new
+					{
+						name = "AddSpouse",
+						description = "Add a spouse relationship between two family members.",
+						parameters = new
+						{
+							type = "object",
+							properties = new
+							{
+								id = new { type = "string", description = "The id of the primary person" },
+								spouseId = new { type = "string", description = "The id of the person to add as a spouse" }
+							},
+							required = new[] { "id", "spouseId" }
+						}
+					},
+				},
+				new
+				{
+					type = "function",
+					function = new
+					{
+						name = "AddChild",
+						description = "Add a child relationship to a parent family member.",
+						parameters = new
+						{
+							type = "object",
+							properties = new
+							{
+								parentId = new { type = "string", description = "The id of the parent person" },
+								childId = new { type = "string", description = "The id of the person to add as a child" }
+							},
+							required = new[] { "parentId", "childId" }
+						}
+					},
+				}
 			},
 			tool_choice = "auto",
 		};
