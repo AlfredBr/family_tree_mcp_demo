@@ -1,4 +1,7 @@
 <Solution>
+  <Project Path="aspire_apphost/aspire_apphost.csproj" />
+  <Project Path="aspire_servicedefaults/aspire_servicedefaults.csproj" />
+  <Project Path="blazor_frontend/blazor_frontend.csproj" />
   <Project Path="family_webapi/family_webapi.csproj" />
   <Project Path="mcp_server/mcp_server.csproj" />
   <Project Path="mcp_tests/mcp_tests.csproj" />
