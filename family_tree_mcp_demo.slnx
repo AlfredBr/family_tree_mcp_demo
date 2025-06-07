@@ -4,6 +4,7 @@
   <Project Path="blazor_frontend/blazor_frontend.csproj" />
   <Project Path="family_webapi/family_webapi.csproj" />
   <Project Path="mcp_server/mcp_server.csproj" />
+  <Project Path="mcp_sse_server/mcp_sse_server.csproj" />
   <Project Path="mcp_tests/mcp_tests.csproj" />
   <Project Path="mcp_client_http/mcp_client_http.csproj" />
   <Project Path="mcp_client_openai/mcp_client_openai.csproj" />

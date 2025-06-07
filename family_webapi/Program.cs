@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 #pragma warning disable S125
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddServiceDefaults();
 
 // Add logging configuration
 builder.Logging.ClearProviders();
@@ -241,5 +242,7 @@ app.MapDelete("/person/{id}", (string id) =>
     logger.LogInformation("Deleted person '{Id}'", id);
     return Results.NoContent();
 });
+
+app.MapDefaultEndpoints();
 
 await app.RunAsync();

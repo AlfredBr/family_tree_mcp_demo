@@ -15,5 +15,6 @@
   <ItemGroup>
     <ProjectReference Include="..\blazor_frontend\blazor_frontend.csproj" />
     <ProjectReference Include="..\family_webapi\family_webapi.csproj" />
+    <ProjectReference Include="..\mcp_sse_server\mcp_sse_server.csproj" />
   </ItemGroup>
 </Project>
