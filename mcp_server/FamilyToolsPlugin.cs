@@ -6,19 +6,12 @@ using Microsoft.SemanticKernel;
 namespace FamilyTreeApp;
 
 // Family Tools Plugin class to wrap the static FamilyTools methods
-public class FamilyToolsPlugin
+public class FamilyToolsPlugin(FamilyServiceClient familyServiceClient)
 {
-    private readonly FamilyServiceClient _familyService;
-
-    public FamilyToolsPlugin(FamilyServiceClient familyService)
-    {
-        _familyService = familyService;
-    }
-
     [KernelFunction, Description("Get a list of all of the people in a family.")]
     public async Task<string> GetFamily()
     {
-        return await FamilyTools.GetFamily(_familyService);
+        return await FamilyTools.GetFamily(familyServiceClient);
     }
 
     [KernelFunction, Description("Get a particular member of the family by id.")]
@@ -26,7 +19,7 @@ public class FamilyToolsPlugin
         [Description("The id of the person in the family")] string id
     )
     {
-        return await FamilyTools.GetPerson(_familyService, id);
+        return await FamilyTools.GetPerson(familyServiceClient, id);
     }
 
     [KernelFunction, Description("Add a new person to the family. This creates a new family member record.")]
@@ -34,7 +27,7 @@ public class FamilyToolsPlugin
         [Description("The JSON representation of the person to add.")] string personJson
     )
     {
-        return await FamilyTools.AddPerson(_familyService, personJson);
+        return await FamilyTools.AddPerson(familyServiceClient, personJson);
     }
 
     [KernelFunction, Description("Update an existing person in the family. This modifies the details of a family member.")]
@@ -43,7 +36,7 @@ public class FamilyToolsPlugin
         [Description("The JSON representation of the updated person.")] string personJson
     )
     {
-        return await FamilyTools.UpdatePerson(_familyService, id, personJson);
+        return await FamilyTools.UpdatePerson(familyServiceClient, id, personJson);
     }
 
     [KernelFunction, Description("Delete a person from the family. This removes a family member record completely.")]
@@ -51,7 +44,7 @@ public class FamilyToolsPlugin
         [Description("The id of the person to delete")] string id
     )
     {
-        return await FamilyTools.DeletePerson(_familyService, id);
+        return await FamilyTools.DeletePerson(familyServiceClient, id);
     }
 
     [KernelFunction, Description("Add a spouse relationship between two family members.")]
@@ -60,7 +53,7 @@ public class FamilyToolsPlugin
         [Description("The id of the person to add as a spouse")] string spouseId
     )
     {
-        return await FamilyTools.AddSpouse(_familyService, id, spouseId);
+        return await FamilyTools.AddSpouse(familyServiceClient, id, spouseId);
     }
 
     [KernelFunction, Description("Add a child relationship to a parent family member.")]
@@ -69,6 +62,6 @@ public class FamilyToolsPlugin
         [Description("The id of the person to add as a child")] string childId
     )
     {
-        return await FamilyTools.AddChild(_familyService, parentId, childId);
+        return await FamilyTools.AddChild(familyServiceClient, parentId, childId);
     }
 }
