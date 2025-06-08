@@ -13,25 +13,35 @@ namespace FamilyTreeApp;
 [TestClass]
 public class FamilyServiceTests
 {
-    public required FamilyService _familyService;
+    public required FamilyServiceClient _familyServiceClient;
 
     [TestInitialize]
     public void Setup()
     {
-        // Initialize the FamilyService with a mock or test logger if needed
-        // For simplicity, we are using a real instance here. In a real test, you might want to mock the logger.
-        var logger = new Mock<ILogger<FamilyService>>();
-        _familyService = new FamilyService(logger.Object);
+        // Initialize the FamilyServiceClient
+        var httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5010") };
+		var logger = new Mock<ILogger<FamilyServiceClient>>();
+        Assert.IsNotNull(logger.Object);
+        _familyServiceClient = new FamilyServiceClient(httpClient, logger.Object);
     }
 
     [TestMethod]
+    public async Task A00_Preflight_Check()
+    {
+        await _familyServiceClient.LogAsync("Preflight Check");
+		// This test is just to ensure the setup is correct and the client can log messages
+        Assert.IsNotNull(_familyServiceClient, "FamilyServiceClient should be initialized");
+        await _familyServiceClient.LogAsync("Preflight Check Passed");
+	}
+
+	[TestMethod]
     public async Task T01_GetFamily_ShouldReturnListOfPeople()
     {
         // Arrange
         var expectedCount = 40; // Adjust this based on your test data
 
         // Act
-        var result = await _familyService.GetFamily();        // Assert
+        var result = await _familyServiceClient.GetFamily();        // Assert
         Assert.IsNotNull(result);
         Assert.IsTrue(result.Count >= expectedCount, $"Expected at least {expectedCount} people, but got {result.Count}");
     }
@@ -43,7 +53,7 @@ public class FamilyServiceTests
         var expectedId = "p1"; // Adjust this based on your test data
 
         // Act
-        var result = await _familyService.GetPerson(expectedId);
+        var result = await _familyServiceClient.GetPerson(expectedId);
 
         // Assert
         Assert.IsNotNull(result);
@@ -57,7 +67,7 @@ public class FamilyServiceTests
         var nonExistentId = "999"; // Adjust this based on your test data
 
         // Act
-        var result = await _familyService.GetPerson(nonExistentId);
+        var result = await _familyServiceClient.GetPerson(nonExistentId);
 
         // Assert
         Assert.IsNull(result);
@@ -78,13 +88,14 @@ public class FamilyServiceTests
 			Children = new List<string>() // Required field
 		};
 
-		await _familyService.AddPerson(person);
-		var fetched = await _familyService.GetPerson(testId);
+		await _familyServiceClient.AddPerson(person);
+		var fetched = await _familyServiceClient.GetPerson(testId);
 		Assert.IsNotNull(fetched);
 		Assert.AreEqual(testId, fetched?.Id);
         Assert.AreEqual("Test Add Person", fetched?.Name);
         Assert.AreEqual(1990, fetched?.YearOfBirth);
         Assert.AreEqual("male", fetched?.Gender, true);
+		await _familyServiceClient.DeletePerson(testId); // Clean up after test
 	}
 
     [TestMethod]
@@ -101,21 +112,28 @@ public class FamilyServiceTests
 			Spouses = new List<string>(), // Required field
 			Children = new List<string>() // Required field
 		};
-		await _familyService.UpdatePerson(testId, person);
-        var fetched = await _familyService.GetPerson(testId);
+		// Add the person first
+		await _familyServiceClient.AddPerson(person);
+        var fetched = await _familyServiceClient.GetPerson(testId);
+		Assert.AreEqual("Test Add Person", fetched?.Name);
+        // Update the person
+        person.Name = "Test Add Person Updated";
+        person.Gender = "male";
+		await _familyServiceClient.UpdatePerson(testId, person);
+        fetched = await _familyServiceClient.GetPerson(testId);
         Assert.IsNotNull(fetched);
 		Assert.AreEqual(testId, fetched?.Id);
-		Assert.AreEqual("Test Add Person", fetched?.Name);
+		Assert.AreEqual("Test Add Person Updated", fetched?.Name);
 		Assert.AreEqual(1990, fetched?.YearOfBirth);
-		Assert.AreEqual("female", fetched?.Gender, true);
+		Assert.AreEqual("male", fetched?.Gender, true);
 	}
 
 	[TestMethod]
     public async Task T06_DeletePerson_ShouldRemovePerson()
     {
         var testId = "test_addperson";
-        await _familyService.DeletePerson(testId);
-        var fetched = await _familyService.GetPerson(testId);
+        await _familyServiceClient.DeletePerson(testId);
+        var fetched = await _familyServiceClient.GetPerson(testId);
         Assert.IsNull(fetched);
     }
 
@@ -147,14 +165,14 @@ public class FamilyServiceTests
         };
 
         // Act & Assert
-        await _familyService.AddPerson(person1);
+        await _familyServiceClient.AddPerson(person1);
         await Assert.ThrowsExceptionAsync<HttpRequestException>(async () =>
         {
-            await _familyService.AddPerson(person2);
+            await _familyServiceClient.AddPerson(person2);
         });
 
         // Cleanup
-        await _familyService.DeletePerson(testId);
+        await _familyServiceClient.DeletePerson(testId);
     }
 
     [TestMethod]
@@ -176,7 +194,7 @@ public class FamilyServiceTests
         // Act & Assert
         await Assert.ThrowsExceptionAsync<HttpRequestException>(async () =>
         {
-            await _familyService.UpdatePerson(nonExistentId, person);
+            await _familyServiceClient.UpdatePerson(nonExistentId, person);
         });
     }
 
@@ -189,7 +207,7 @@ public class FamilyServiceTests
         // Act & Assert
         await Assert.ThrowsExceptionAsync<HttpRequestException>(async () =>
         {
-            await _familyService.DeletePerson(nonExistentId);
+            await _familyServiceClient.DeletePerson(nonExistentId);
         });
     }    [TestMethod]
     public async Task T10_AddPerson_WithComplexRelationships()
@@ -233,9 +251,9 @@ public class FamilyServiceTests
             Spouses = new List<string>(),
             Children = new List<string>()
         };        // Act - Add people first without relationships
-        await _familyService.AddPerson(parent);
-        await _familyService.AddPerson(spouse);
-        await _familyService.AddPerson(child);
+        await _familyServiceClient.AddPerson(parent);
+        await _familyServiceClient.AddPerson(spouse);
+        await _familyServiceClient.AddPerson(child);
 
         // Then update them with relationships by updating their objects
         parent.Spouses.Add(spouseId);
@@ -245,12 +263,12 @@ public class FamilyServiceTests
         child.Parents.Add(parentId);
         child.Parents.Add(spouseId);
 
-        await _familyService.UpdatePerson(parentId, parent);
-        await _familyService.UpdatePerson(spouseId, spouse);
-        await _familyService.UpdatePerson(childId, child);// Assert - Check people were created and relationships established
-        var fetchedParent = await _familyService.GetPerson(parentId);
-        var fetchedSpouse = await _familyService.GetPerson(spouseId);
-        var fetchedChild = await _familyService.GetPerson(childId);
+        await _familyServiceClient.UpdatePerson(parentId, parent);
+        await _familyServiceClient.UpdatePerson(spouseId, spouse);
+        await _familyServiceClient.UpdatePerson(childId, child);// Assert - Check people were created and relationships established
+        var fetchedParent = await _familyServiceClient.GetPerson(parentId);
+        var fetchedSpouse = await _familyServiceClient.GetPerson(spouseId);
+        var fetchedChild = await _familyServiceClient.GetPerson(childId);
 
         Assert.IsNotNull(fetchedParent);
         Assert.IsNotNull(fetchedSpouse);
@@ -269,9 +287,9 @@ public class FamilyServiceTests
         Assert.IsTrue(fetchedChild.Parents.Contains(spouseId));
 
         // Cleanup
-        await _familyService.DeletePerson(childId);
-        await _familyService.DeletePerson(spouseId);
-        await _familyService.DeletePerson(parentId);
+        await _familyServiceClient.DeletePerson(childId);
+        await _familyServiceClient.DeletePerson(spouseId);
+        await _familyServiceClient.DeletePerson(parentId);
     }
 
     [TestMethod]
@@ -290,12 +308,12 @@ public class FamilyServiceTests
             Children = new List<string>()
         };
 
-        await _familyService.AddPerson(person);
+        await _familyServiceClient.AddPerson(person);
 
         // Act - Test different case variations
-        var result1 = await _familyService.GetPerson(testId.ToUpper());
-        var result2 = await _familyService.GetPerson(testId.ToLower());
-        var result3 = await _familyService.GetPerson("TEST_case_INSENSITIVE");
+        var result1 = await _familyServiceClient.GetPerson(testId.ToUpper());
+        var result2 = await _familyServiceClient.GetPerson(testId.ToLower());
+        var result3 = await _familyServiceClient.GetPerson("TEST_case_INSENSITIVE");
 
         // Assert
         Assert.IsNotNull(result1);
@@ -306,7 +324,7 @@ public class FamilyServiceTests
         Assert.AreEqual(testId, result3?.Id);
 
         // Cleanup
-        await _familyService.DeletePerson(testId);
+        await _familyServiceClient.DeletePerson(testId);
     }
 
     [TestMethod]    public async Task T12_UpdatePerson_ChangeAllProperties()
@@ -324,7 +342,7 @@ public class FamilyServiceTests
             Children = new List<string>()
         };
 
-        await _familyService.AddPerson(originalPerson);        var updatedPerson = new Person
+        await _familyServiceClient.AddPerson(originalPerson);        var updatedPerson = new Person
         {
             Id = testId,
             Name = "Updated Name",
@@ -336,7 +354,7 @@ public class FamilyServiceTests
         };
 
         // Act
-        var result = await _familyService.UpdatePerson(testId, updatedPerson);        // Assert
+        var result = await _familyServiceClient.UpdatePerson(testId, updatedPerson);        // Assert
         Assert.IsNotNull(result);
         Assert.AreEqual("Updated Name", result.Name);
         Assert.AreEqual("female", result.Gender);
@@ -346,7 +364,7 @@ public class FamilyServiceTests
         Assert.AreEqual(0, result.Children.Count);
 
         // Cleanup
-        await _familyService.DeletePerson(testId);
+        await _familyServiceClient.DeletePerson(testId);
     }
 
     [TestMethod]
@@ -356,8 +374,8 @@ public class FamilyServiceTests
         // and returns the expected structure
 
         // Act
-        var family1 = await _familyService.GetFamily();
-        var family2 = await _familyService.GetFamily();
+        var family1 = await _familyServiceClient.GetFamily();
+        var family2 = await _familyServiceClient.GetFamily();
 
         // Assert
         Assert.IsNotNull(family1);
@@ -394,7 +412,7 @@ public class FamilyServiceTests
         };
 
         // Act
-        var result = await _familyService.AddPerson(person);
+        var result = await _familyServiceClient.AddPerson(person);
 
         // Assert
         Assert.IsNotNull(result);
@@ -402,7 +420,7 @@ public class FamilyServiceTests
         Assert.AreEqual("", result.Name);
 
         // Cleanup
-        await _familyService.DeletePerson(testId);
+        await _familyServiceClient.DeletePerson(testId);
     }    [TestMethod]
     public async Task T15_AddPerson_WithSpecialCharacters()
     {
@@ -420,7 +438,7 @@ public class FamilyServiceTests
         };
 
         // Act
-        var result = await _familyService.AddPerson(person);
+        var result = await _familyServiceClient.AddPerson(person);
 
         // Assert
         Assert.IsNotNull(result);
@@ -428,7 +446,7 @@ public class FamilyServiceTests
         Assert.AreEqual("Test Name with Special Chars: àáâãäåæçèéêë", result.Name);
 
         // Cleanup
-        await _familyService.DeletePerson(testId);
+        await _familyServiceClient.DeletePerson(testId);
     }
 
     [TestMethod]
@@ -448,14 +466,14 @@ public class FamilyServiceTests
         };
 
         // Act
-        var result = await _familyService.AddPerson(person);
+        var result = await _familyServiceClient.AddPerson(person);
 
         // Assert
         Assert.IsNotNull(result);
         Assert.AreEqual(1800, result.YearOfBirth);
 
         // Cleanup
-        await _familyService.DeletePerson(testId);
+        await _familyServiceClient.DeletePerson(testId);
     }
 
     [TestMethod]
@@ -465,7 +483,7 @@ public class FamilyServiceTests
         var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
         // Act
-        var family = await _familyService.GetFamily();
+        var family = await _familyServiceClient.GetFamily();
 
         stopwatch.Stop();
 

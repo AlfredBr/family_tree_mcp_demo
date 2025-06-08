@@ -10,15 +10,18 @@ namespace FamilyTreeApp;
 [TestClass]
 public class FamilyToolsTests
 {
-    public required FamilyService _familyService;
+    public required FamilyServiceClient _familyService;
 
     [TestInitialize]
     public void Setup()
     {
-        // Create a mock or null logger for FamilyService
-        var logger = new Mock<ILogger<FamilyService>>();
-        _familyService = new FamilyService(logger.Object);
-    }    [TestMethod]
+		// Create a mock or null logger for FamilyServiceClient
+		var httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5010") };
+		var logger = new Mock<ILogger<FamilyServiceClient>>();
+        _familyService = new FamilyServiceClient(httpClient, logger.Object);
+    }
+
+    [TestMethod]
     public async Task T99_GetFamily_ShouldReturnListOfPeople()
     {
         // Arrange
