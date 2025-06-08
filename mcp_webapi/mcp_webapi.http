@@ -1,6 +1,11 @@
-@mcp_webapi_HostAddress = http://localhost:5274
+@mcp_webapi_HostAddress = https://localhost:7074
 
-GET {{mcp_webapi_HostAddress}}/weatherforecast/
+GET {{mcp_webapi_HostAddress}}/family/
+Accept: application/json
+
+###
+
+GET {{mcp_webapi_HostAddress}}/family/p1
 Accept: application/json
 
 ###

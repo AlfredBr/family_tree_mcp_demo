@@ -6,5 +6,6 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\aspire_servicedefaults\aspire_servicedefaults.csproj" />
+    <ProjectReference Include="..\models\models.csproj" />
   </ItemGroup>
 </Project>
