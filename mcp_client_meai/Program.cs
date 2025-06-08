@@ -1,10 +1,15 @@
 ﻿using System.Text;
-using FamilyTreeApp;
-using Microsoft.Extensions.AI;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
+
+using Microsoft.Extensions.AI;
+
+using Throw;
+
+using FamilyTreeApp;
 
 // Build configuration
 var builder = Host.CreateDefaultBuilder(args);
@@ -17,15 +22,18 @@ builder.ConfigureLogging(logging =>
     logging.ClearProviders();
     logging.AddSimpleConsole(options =>
     {
+		options.TimestampFormat = "HH:mm:ss ";
         options.ColorBehavior = LoggerColorBehavior.Enabled;
         options.SingleLine = true;
     });
 });
 
+
 // Configure services
 builder.ConfigureServices(
     (context, services) =>
     {
+
         // Add logging
         services.AddLogging();
 
@@ -42,7 +50,10 @@ builder.ConfigureServices(
             throw new InvalidOperationException("API key is required.");
         }
 
-        services.AddSingleton<FamilyServiceClient>();
+		// Get the base address for the Family API
+		var baseAddress = context.Configuration["FamilyApi:BaseAddress"];
+        baseAddress.ThrowIfNull().IfEmpty();
+		services.AddHttpClient<FamilyServiceClient>(client => client.BaseAddress = new(baseAddress));
 
         // Register ChatClient using Microsoft.Extensions.AI.OpenAI
         services.AddSingleton<IChatClient>(provider =>
@@ -55,7 +66,7 @@ builder.ConfigureServices(
 var host = builder.Build();
 
 Console.ForegroundColor = ConsoleColor.Gray;
-Console.WriteLine($"🌳 Family Tree Chatbot powered by {llmModel}");
+Console.WriteLine($"🌳 Family Tree Chatbot powered by {llmModel} and Microsoft.Extensions.AI");
 Console.WriteLine("Ask me anything about the family tree!");
 Console.WriteLine("Type 'exit' to quit.");
 Console.WriteLine();

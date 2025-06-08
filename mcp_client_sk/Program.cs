@@ -4,20 +4,23 @@
 // https://platform.openai.com/docs/guides/function-calling?api-mode=responses
 // https://www.youtube.com/watch?v=FLpS7OfD5-s
 
-using FamilyTreeApp;
-//using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
+
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 
-var llmModel = "o4-mini";
+using Throw;
+
+using FamilyTreeApp;
 
 // Build configuration
 var builder = Host.CreateDefaultBuilder(args);
+
+var llmModel = "o4-mini";
 
 // Configure logging
 builder.ConfigureLogging(logging =>
@@ -25,7 +28,7 @@ builder.ConfigureLogging(logging =>
     logging.ClearProviders();
     logging.AddSimpleConsole(options =>
     {
-        //options.TimestampFormat = "HH:mm:ss ";
+        options.TimestampFormat = "HH:mm:ss ";
         options.ColorBehavior = LoggerColorBehavior.Enabled;
         options.SingleLine = true;
     });
@@ -35,14 +38,8 @@ builder.ConfigureLogging(logging =>
 builder.ConfigureServices(
     (context, services) =>
     {
-        // Add configuration for OpenAI API key
-        //var configuration = context.Configuration;
-
-        // Add FamilyService
-        services.AddSingleton<FamilyServiceClient>();
-
-        // Add Semantic Kernel
-        services.AddKernel();
+		// Add logging
+		services.AddLogging();
 
         // Get OpenAI API key from environment variable
         var openAIApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
@@ -55,7 +52,15 @@ builder.ConfigureServices(
 
         // Configure OpenAI
         services.AddOpenAIChatCompletion(llmModel, openAIApiKey);
-    }
+
+        // Add Semantic Kernel
+        services.AddKernel();
+
+		// Get the base address for the Family API from configuration
+		var baseAddress = context.Configuration["FamilyApi:BaseAddress"];
+		baseAddress.ThrowIfNull().IfEmpty();
+		services.AddHttpClient<FamilyServiceClient>(client => client.BaseAddress = new(baseAddress));
+	}
 );
 
 var host = builder.Build();
@@ -72,7 +77,7 @@ logger.LogInformation("FamilyTools plugin loaded.");
 
 // Display welcome message
 Console.ForegroundColor = ConsoleColor.Gray;
-Console.WriteLine($"🌳 Family Tree Chatbot powered by {llmModel}");
+Console.WriteLine($"🌳 Family Tree Chatbot powered by {llmModel} and MIcrosoft.SemanticKernel");
 Console.WriteLine("Ask me anything about the family tree!");
 Console.WriteLine("Type 'exit' to quit.");
 Console.WriteLine();

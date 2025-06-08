@@ -13,9 +13,9 @@ public class FamilyServiceClient(HttpClient httpClient, ILogger<FamilyServiceCli
     {
         logger.LogInformation(message);
         await Task.CompletedTask; // Simulate async logging
-	}
+    }
 
-	public async Task<List<Person>> GetFamily()
+    public async Task<List<Person>> GetFamily()
     {
         logger.LogInformation("Fetching family data from web service...");
 
