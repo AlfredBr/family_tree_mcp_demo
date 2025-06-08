@@ -39,8 +39,8 @@ List<Person> ReadPeople()
             {
                 throw new FileNotFoundException($"File {PeopleFile} does not exist.");
 
-			}
-			var json = File.ReadAllText(PeopleFile);
+            }
+            var json = File.ReadAllText(PeopleFile);
             var people = JsonSerializer.Deserialize<List<Person>>(json) ?? new List<Person>();
             logger.LogInformation("Read {Count} people from {File}", people.Count, PeopleFile);
             return people;
