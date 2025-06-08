@@ -1,3 +1,5 @@
+#pragma warning disable S1481
+
 var builder = DistributedApplication.CreateBuilder(args);
 builder.Environment.ApplicationName = "Aspire AppHost";
 var rawWebApi = builder.AddProject<Projects.family_webapi>("raw-webapi");
