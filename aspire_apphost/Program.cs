@@ -1,13 +1,15 @@
 var builder = DistributedApplication.CreateBuilder(args);
 builder.Environment.ApplicationName = "Aspire AppHost";
-var webApi = builder.AddProject<Projects.family_webapi>("webapi");
-var mcpWebApi = builder.AddProject<Projects.mcp_webapi>("mcpwebapi")
+var rawWebApi = builder.AddProject<Projects.family_webapi>("raw-webapi");
+var mcpWebApi = builder.AddProject<Projects.mcp_webapi>("mcp-webapi")
+	.WithReference(rawWebApi)
+	.WaitFor(rawWebApi)
 	.WithExternalHttpEndpoints();
-var mcpSseServer = builder.AddProject<Projects.mcp_sse_server>("server")
-	.WithReference(webApi)
-	.WaitFor(webApi)
+var mcpSseServer = builder.AddProject<Projects.mcp_sse_server>("mcp-sse-server")
+	.WithReference(rawWebApi)
+	.WaitFor(rawWebApi)
 	.WithExternalHttpEndpoints();
-var frontend = builder.AddProject<Projects.blazor_frontend>("frontend")
+var blazorFrontend = builder.AddProject<Projects.blazor_frontend>("blazor-frontend")
 	.WithReference(mcpSseServer)
 	.WaitFor(mcpSseServer)
 	.WithExternalHttpEndpoints();

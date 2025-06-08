@@ -21,10 +21,17 @@ builder.Logging.AddSimpleConsole(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Get the base address for the Family API
-var baseAddress = builder.Configuration["FamilyApi:BaseAddress"];
-baseAddress.ThrowIfNull().IfEmpty();
-builder.Services.AddHttpClient<FamilyServiceClient>(client => client.BaseAddress = new(baseAddress));
+builder.Services.AddHttpClient<FamilyServiceClient>(client =>
+{
+	// This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
+	// Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
+
+    var isAspireHosted = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("services__raw-webapi__https__0"));
+    var baseAddress = isAspireHosted
+        ? "https+http://raw-webapi"
+        : builder.Configuration["FamilyApi:BaseAddress"];
+	client.BaseAddress = new(baseAddress.ThrowIfNull().IfEmpty().Value);
+});
 
 var app = builder.Build();
 
@@ -41,6 +48,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
+logger.LogInformation("Starting MCP Web API...");
 
 app.MapGet("/family",
         async (FamilyServiceClient familyService) =>

@@ -10,7 +10,7 @@ namespace FamilyTreeApp;
 [TestClass]
 public class FamilyToolsTests
 {
-    public required FamilyServiceClient _familyService;
+    public required FamilyServiceClient _familyServiceClient;
 
     [TestInitialize]
     public void Setup()
@@ -18,7 +18,7 @@ public class FamilyToolsTests
 		// Create a mock or null logger for FamilyServiceClient
 		var httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5010") };
 		var logger = new Mock<ILogger<FamilyServiceClient>>();
-        _familyService = new FamilyServiceClient(httpClient, logger.Object);
+        _familyServiceClient = new FamilyServiceClient(httpClient, logger.Object);
     }
 
     [TestMethod]
@@ -28,7 +28,7 @@ public class FamilyToolsTests
         var expectedMinCount = 40; // Minimum expected count, allowing for test artifacts
 
         // Act
-        var result = await FamilyTools.GetFamily(_familyService);
+        var result = await FamilyTools.GetFamily(_familyServiceClient);
         // Deserialize the result to a list of Person objects
         var people = JsonSerializer.Deserialize<List<Person>>(result);
 
@@ -44,7 +44,7 @@ public class FamilyToolsTests
         var expectedId = "p1"; // Adjust this based on your test data
 
         // Act
-        var result = await FamilyTools.GetPerson(_familyService, expectedId);
+        var result = await FamilyTools.GetPerson(_familyServiceClient, expectedId);
 
         // Assert
         Assert.IsNotNull(result);
@@ -60,7 +60,7 @@ public class FamilyToolsTests
         var nonExistentId = "999"; // Adjust this based on your test data
 
         // Act
-        var result = await FamilyTools.GetPerson(_familyService, nonExistentId);
+        var result = await FamilyTools.GetPerson(_familyServiceClient, nonExistentId);
 
         // Assert
         Assert.IsNull(result);
@@ -75,7 +75,7 @@ public class FamilyToolsTests
         string personJson = "{\"id\":\"" + personId + "\",\"name\":\"Test Person\",\"gender\":\"Other\",\"yearOfBirth\":2000,\"parents\":[],\"spouses\":[],\"children\":[]}";
 
         // Act
-        var result = await FamilyTools.AddPerson(_familyService, personJson);
+        var result = await FamilyTools.AddPerson(_familyServiceClient, personJson);
 
         // Assert
         Assert.IsNotNull(result);
@@ -93,7 +93,7 @@ public class FamilyToolsTests
         var invalidJson = "{ invalid json }";
 
         // Act
-        var result = await FamilyTools.AddPerson(_familyService, invalidJson);
+        var result = await FamilyTools.AddPerson(_familyServiceClient, invalidJson);
 
         // Assert
         Assert.IsNotNull(result);
@@ -114,7 +114,7 @@ public class FamilyToolsTests
         string personJson = "{\"id\":\"" + personId + "\",\"name\":\"" + updatedName + "\",\"gender\":\"Male\",\"yearOfBirth\":1980,\"parents\":[],\"spouses\":[],\"children\":[]}";
 
         // Act
-        var result = await FamilyTools.UpdatePerson(_familyService, personId, personJson);
+        var result = await FamilyTools.UpdatePerson(_familyServiceClient, personId, personJson);
 
         // Assert
         Assert.IsNotNull(result);
@@ -132,7 +132,7 @@ public class FamilyToolsTests
         var invalidJson = "{ invalid json }";
 
         // Act
-        var result = await FamilyTools.UpdatePerson(_familyService, personId, invalidJson);
+        var result = await FamilyTools.UpdatePerson(_familyServiceClient, personId, invalidJson);
 
         // Assert
         Assert.IsNotNull(result);
@@ -148,7 +148,7 @@ public class FamilyToolsTests
         var personId = "test_person"; // Use an ID that can be deleted in your test data
 
         // Act
-        var result = await FamilyTools.DeletePerson(_familyService, personId);
+        var result = await FamilyTools.DeletePerson(_familyServiceClient, personId);
 
         // Assert
         Assert.IsNotNull(result);
@@ -165,7 +165,7 @@ public class FamilyToolsTests
         var nonExistentId = "non_existent_id";
 
         // Act
-        var result = await FamilyTools.DeletePerson(_familyService, nonExistentId);
+        var result = await FamilyTools.DeletePerson(_familyServiceClient, nonExistentId);
 
         // Assert
         Assert.IsNotNull(result);
@@ -180,7 +180,7 @@ public class FamilyToolsTests
         // Arrange - JSON missing required "gender" field
         var invalidJson = "{\"id\":\"missing_field_test\",\"name\":\"Test Person\",\"yearOfBirth\":2000,\"parents\":[],\"spouses\":[],\"children\":[]}";
         // Act
-        var result = await FamilyTools.AddPerson(_familyService, invalidJson);
+        var result = await FamilyTools.AddPerson(_familyServiceClient, invalidJson);
 
         // Assert
         Assert.IsNotNull(result);
@@ -195,12 +195,12 @@ public class FamilyToolsTests
         // Arrange
         var personId = "update_missing_field_test";
         string validPersonJson = "{\"id\":\"" + personId + "\",\"name\":\"Valid Person\",\"gender\":\"male\",\"yearOfBirth\":1990,\"parents\":[],\"spouses\":[],\"children\":[]}";
-        await FamilyTools.AddPerson(_familyService, validPersonJson);
+        await FamilyTools.AddPerson(_familyServiceClient, validPersonJson);
 
         // JSON missing required "name" field
         var invalidUpdateJson = "{\"id\":\"" + personId + "\",\"gender\":\"male\",\"yearOfBirth\":1990,\"parents\":[],\"spouses\":[],\"children\":[]}";
         // Act
-        var result = await FamilyTools.UpdatePerson(_familyService, personId, invalidUpdateJson);
+        var result = await FamilyTools.UpdatePerson(_familyServiceClient, personId, invalidUpdateJson);
 
         // Assert
         Assert.IsNotNull(result);
@@ -209,7 +209,7 @@ public class FamilyToolsTests
         Assert.IsTrue(errorResult.TryGetProperty("error", out _));
 
         // Cleanup
-        await FamilyTools.DeletePerson(_familyService, personId);
+        await FamilyTools.DeletePerson(_familyServiceClient, personId);
     }    [TestMethod]
     public async Task T11_AddPerson_WithNullLists_ShouldInitializeLists()
     {
@@ -218,7 +218,7 @@ public class FamilyToolsTests
         var jsonWithoutLists = "{\"id\":\"" + personId + "\",\"name\":\"Test Person\",\"gender\":\"other\",\"yearOfBirth\":2000}";
 
         // Act
-        var result = await FamilyTools.AddPerson(_familyService, jsonWithoutLists);
+        var result = await FamilyTools.AddPerson(_familyServiceClient, jsonWithoutLists);
 
         // Assert
         Assert.IsNotNull(result);
@@ -242,7 +242,7 @@ public class FamilyToolsTests
             Assert.AreEqual(0, resultPerson.Children.Count);
 
             // Cleanup
-            await FamilyTools.DeletePerson(_familyService, personId);
+            await FamilyTools.DeletePerson(_familyServiceClient, personId);
         }
     }
 
@@ -255,27 +255,27 @@ public class FamilyToolsTests
 
         string person1Json = "{\"id\":\"" + person1Id + "\",\"name\":\"Person 1\",\"gender\":\"male\",\"yearOfBirth\":1980,\"parents\":[],\"spouses\":[],\"children\":[]}";
         string person2Json = "{\"id\":\"" + person2Id + "\",\"name\":\"Person 2\",\"gender\":\"female\",\"yearOfBirth\":1982,\"parents\":[],\"spouses\":[],\"children\":[]}";
-        await FamilyTools.AddPerson(_familyService, person1Json);
-        await FamilyTools.AddPerson(_familyService, person2Json);
+        await FamilyTools.AddPerson(_familyServiceClient, person1Json);
+        await FamilyTools.AddPerson(_familyServiceClient, person2Json);
 
         // Act - Add spouse relationship twice
-        var result1 = await FamilyTools.AddSpouse(_familyService, person1Id, person2Id);
-        var result2 = await FamilyTools.AddSpouse(_familyService, person1Id, person2Id);
+        var result1 = await FamilyTools.AddSpouse(_familyServiceClient, person1Id, person2Id);
+        var result2 = await FamilyTools.AddSpouse(_familyServiceClient, person1Id, person2Id);
 
         // Assert
         Assert.IsNotNull(result1);
         Assert.IsNotNull(result2);
         Assert.IsFalse(result1.Contains("error"));
         Assert.IsFalse(result2.Contains("error"));        // Verify the relationship exists only once
-        var personResult = await FamilyTools.GetPerson(_familyService, person1Id);
+        var personResult = await FamilyTools.GetPerson(_familyServiceClient, person1Id);
         Assert.IsNotNull(personResult);
         var person = JsonSerializer.Deserialize<Person>(personResult);
         Assert.IsNotNull(person);
         Assert.AreEqual(1, person.Spouses.Count(s => s == person2Id));
 
         // Cleanup
-        await FamilyTools.DeletePerson(_familyService, person1Id);
-        await FamilyTools.DeletePerson(_familyService, person2Id);
+        await FamilyTools.DeletePerson(_familyServiceClient, person1Id);
+        await FamilyTools.DeletePerson(_familyServiceClient, person2Id);
     }
 
     [TestMethod]
@@ -287,27 +287,27 @@ public class FamilyToolsTests
 
         string parentJson = "{\"id\":\"" + parentId + "\",\"name\":\"Parent Person\",\"gender\":\"female\",\"yearOfBirth\":1970,\"parents\":[],\"spouses\":[],\"children\":[]}";
         string childJson = "{\"id\":\"" + childId + "\",\"name\":\"Child Person\",\"gender\":\"male\",\"yearOfBirth\":2000,\"parents\":[],\"spouses\":[],\"children\":[]}";
-        await FamilyTools.AddPerson(_familyService, parentJson);
-        await FamilyTools.AddPerson(_familyService, childJson);
+        await FamilyTools.AddPerson(_familyServiceClient, parentJson);
+        await FamilyTools.AddPerson(_familyServiceClient, childJson);
 
         // Act - Add child relationship twice
-        var result1 = await FamilyTools.AddChild(_familyService, parentId, childId);
-        var result2 = await FamilyTools.AddChild(_familyService, parentId, childId);
+        var result1 = await FamilyTools.AddChild(_familyServiceClient, parentId, childId);
+        var result2 = await FamilyTools.AddChild(_familyServiceClient, parentId, childId);
 
         // Assert
         Assert.IsNotNull(result1);
         Assert.IsNotNull(result2);
         Assert.IsFalse(result1.Contains("error"));
         Assert.IsFalse(result2.Contains("error"));        // Verify the relationship exists only once
-        var parentResult = await FamilyTools.GetPerson(_familyService, parentId);
+        var parentResult = await FamilyTools.GetPerson(_familyServiceClient, parentId);
         Assert.IsNotNull(parentResult);
         var parent = JsonSerializer.Deserialize<Person>(parentResult);
         Assert.IsNotNull(parent);
         Assert.AreEqual(1, parent.Children.Count(c => c == childId));
 
         // Cleanup
-        await FamilyTools.DeletePerson(_familyService, childId);
-        await FamilyTools.DeletePerson(_familyService, parentId);
+        await FamilyTools.DeletePerson(_familyServiceClient, childId);
+        await FamilyTools.DeletePerson(_familyServiceClient, parentId);
     }
 
     [TestMethod]
@@ -329,23 +329,23 @@ public class FamilyToolsTests
         string child1Json = "{\"id\":\"" + child1Id + "\",\"name\":\"Child 1\",\"gender\":\"male\",\"yearOfBirth\":2000,\"parents\":[],\"spouses\":[],\"children\":[]}";
         string child2Json = "{\"id\":\"" + child2Id + "\",\"name\":\"Child 2\",\"gender\":\"female\",\"yearOfBirth\":2002,\"parents\":[],\"spouses\":[],\"children\":[]}";
         // Act - Create all persons and establish relationships
-        await FamilyTools.AddPerson(_familyService, grandpaJson);
-        await FamilyTools.AddPerson(_familyService, grandmaJson);
-        await FamilyTools.AddPerson(_familyService, dadJson);
-        await FamilyTools.AddPerson(_familyService, momJson);
-        await FamilyTools.AddPerson(_familyService, child1Json);
-        await FamilyTools.AddPerson(_familyService, child2Json);
+        await FamilyTools.AddPerson(_familyServiceClient, grandpaJson);
+        await FamilyTools.AddPerson(_familyServiceClient, grandmaJson);
+        await FamilyTools.AddPerson(_familyServiceClient, dadJson);
+        await FamilyTools.AddPerson(_familyServiceClient, momJson);
+        await FamilyTools.AddPerson(_familyServiceClient, child1Json);
+        await FamilyTools.AddPerson(_familyServiceClient, child2Json);
 
         // Establish relationships
-        await FamilyTools.AddSpouse(_familyService, grandpaId, grandmaId);
-        await FamilyTools.AddChild(_familyService, grandpaId, dadId);
-        await FamilyTools.AddChild(_familyService, grandmaId, dadId);
-        await FamilyTools.AddSpouse(_familyService, dadId, momId);
-        await FamilyTools.AddChild(_familyService, dadId, child1Id);
-        await FamilyTools.AddChild(_familyService, momId, child1Id);
-        await FamilyTools.AddChild(_familyService, dadId, child2Id);
-        await FamilyTools.AddChild(_familyService, momId, child2Id);        // Assert - Verify complex relationships
-        var dadResult = await FamilyTools.GetPerson(_familyService, dadId);
+        await FamilyTools.AddSpouse(_familyServiceClient, grandpaId, grandmaId);
+        await FamilyTools.AddChild(_familyServiceClient, grandpaId, dadId);
+        await FamilyTools.AddChild(_familyServiceClient, grandmaId, dadId);
+        await FamilyTools.AddSpouse(_familyServiceClient, dadId, momId);
+        await FamilyTools.AddChild(_familyServiceClient, dadId, child1Id);
+        await FamilyTools.AddChild(_familyServiceClient, momId, child1Id);
+        await FamilyTools.AddChild(_familyServiceClient, dadId, child2Id);
+        await FamilyTools.AddChild(_familyServiceClient, momId, child2Id);        // Assert - Verify complex relationships
+        var dadResult = await FamilyTools.GetPerson(_familyServiceClient, dadId);
         Assert.IsNotNull(dadResult);
         var dad = JsonSerializer.Deserialize<Person>(dadResult);
         Assert.IsNotNull(dad);
@@ -359,12 +359,12 @@ public class FamilyToolsTests
         Assert.IsTrue(dad.Children.Contains(child2Id));
 
         // Cleanup
-        await FamilyTools.DeletePerson(_familyService, child1Id);
-        await FamilyTools.DeletePerson(_familyService, child2Id);
-        await FamilyTools.DeletePerson(_familyService, dadId);
-        await FamilyTools.DeletePerson(_familyService, momId);
-        await FamilyTools.DeletePerson(_familyService, grandpaId);
-        await FamilyTools.DeletePerson(_familyService, grandmaId);
+        await FamilyTools.DeletePerson(_familyServiceClient, child1Id);
+        await FamilyTools.DeletePerson(_familyServiceClient, child2Id);
+        await FamilyTools.DeletePerson(_familyServiceClient, dadId);
+        await FamilyTools.DeletePerson(_familyServiceClient, momId);
+        await FamilyTools.DeletePerson(_familyServiceClient, grandpaId);
+        await FamilyTools.DeletePerson(_familyServiceClient, grandmaId);
     }
 
     [TestMethod]
@@ -375,7 +375,7 @@ public class FamilyToolsTests
         var specialName = "José María O'Connor-Smith";
         string personJson = "{\"id\":\"" + personId + "\",\"name\":\"" + specialName + "\",\"gender\":\"male\",\"yearOfBirth\":1985,\"parents\":[],\"spouses\":[],\"children\":[]}";
         // Act
-        var result = await FamilyTools.AddPerson(_familyService, personJson);
+        var result = await FamilyTools.AddPerson(_familyServiceClient, personJson);
 
         // Assert
         Assert.IsNotNull(result);
@@ -387,7 +387,7 @@ public class FamilyToolsTests
         Assert.AreEqual(specialName, resultPerson.Name);
 
         // Cleanup
-        await FamilyTools.DeletePerson(_familyService, personId);
+        await FamilyTools.DeletePerson(_familyServiceClient, personId);
     }
 
     [TestMethod]
@@ -400,8 +400,8 @@ public class FamilyToolsTests
         string person1Json = "{\"id\":\"" + personId1 + "\",\"name\":\"Ancient Person\",\"gender\":\"male\",\"yearOfBirth\":1800,\"parents\":[],\"spouses\":[],\"children\":[]}";
         string person2Json = "{\"id\":\"" + personId2 + "\",\"name\":\"Future Person\",\"gender\":\"female\",\"yearOfBirth\":2050,\"parents\":[],\"spouses\":[],\"children\":[]}";
         // Act
-        var result1 = await FamilyTools.AddPerson(_familyService, person1Json);
-        var result2 = await FamilyTools.AddPerson(_familyService, person2Json);
+        var result1 = await FamilyTools.AddPerson(_familyServiceClient, person1Json);
+        var result2 = await FamilyTools.AddPerson(_familyServiceClient, person2Json);
 
         // Assert
         Assert.IsNotNull(result1);
@@ -416,8 +416,8 @@ public class FamilyToolsTests
         Assert.AreEqual(2050, person2.YearOfBirth);
 
         // Cleanup
-        await FamilyTools.DeletePerson(_familyService, personId1);
-        await FamilyTools.DeletePerson(_familyService, personId2);
+        await FamilyTools.DeletePerson(_familyServiceClient, personId1);
+        await FamilyTools.DeletePerson(_familyServiceClient, personId2);
     }
 
     [TestMethod]
@@ -426,13 +426,13 @@ public class FamilyToolsTests
         // Arrange
         var personId = "self_ref_test";
         string personJson = "{\"id\":\"" + personId + "\",\"name\":\"Self Person\",\"gender\":\"other\",\"yearOfBirth\":1990,\"parents\":[],\"spouses\":[],\"children\":[]}";
-        await FamilyTools.AddPerson(_familyService, personJson);
+        await FamilyTools.AddPerson(_familyServiceClient, personJson);
 
         // Act - Try to add person as their own spouse
-        var spouseResult = await FamilyTools.AddSpouse(_familyService, personId, personId);
+        var spouseResult = await FamilyTools.AddSpouse(_familyServiceClient, personId, personId);
 
         // Act - Try to add person as their own child
-        var childResult = await FamilyTools.AddChild(_familyService, personId, personId);
+        var childResult = await FamilyTools.AddChild(_familyServiceClient, personId, personId);
 
         // Assert
         Assert.IsNotNull(spouseResult);
@@ -443,7 +443,7 @@ public class FamilyToolsTests
         Assert.IsTrue(childResult.Contains("error") || !childResult.Contains("error"));
 
         // Cleanup
-        await FamilyTools.DeletePerson(_familyService, personId);
+        await FamilyTools.DeletePerson(_familyServiceClient, personId);
     }
 
     [TestMethod]
@@ -456,8 +456,8 @@ public class FamilyToolsTests
         string person1Json = "{\"id\":\"" + personId1 + "\",\"name\":\"Lower Case\",\"gender\":\"male\",\"yearOfBirth\":1990,\"parents\":[],\"spouses\":[],\"children\":[]}";
         string person2Json = "{\"id\":\"" + personId2 + "\",\"name\":\"Upper Case\",\"gender\":\"female\",\"yearOfBirth\":1992,\"parents\":[],\"spouses\":[],\"children\":[]}";
         // Act
-        var result1 = await FamilyTools.AddPerson(_familyService, person1Json);
-        var result2 = await FamilyTools.AddPerson(_familyService, person2Json);
+        var result1 = await FamilyTools.AddPerson(_familyServiceClient, person1Json);
+        var result2 = await FamilyTools.AddPerson(_familyServiceClient, person2Json);
 
         // Assert
         Assert.IsNotNull(result1);
@@ -475,8 +475,8 @@ public class FamilyToolsTests
         Assert.AreNotEqual(person1.Id, person2.Id);
 
         // Cleanup
-        await FamilyTools.DeletePerson(_familyService, personId1);
-        await FamilyTools.DeletePerson(_familyService, personId2);
+        await FamilyTools.DeletePerson(_familyServiceClient, personId1);
+        await FamilyTools.DeletePerson(_familyServiceClient, personId2);
     }    [TestMethod]
     public async Task T19_UpdatePerson_ShouldReplaceAllData()
     {
@@ -488,16 +488,16 @@ public class FamilyToolsTests
         string parentJson = "{\"id\":\"" + parentId + "\",\"name\":\"Original Parent\",\"gender\":\"male\",\"yearOfBirth\":1970,\"parents\":[],\"spouses\":[],\"children\":[]}";
         string childJson = "{\"id\":\"" + childId + "\",\"name\":\"Child\",\"gender\":\"female\",\"yearOfBirth\":2000,\"parents\":[],\"spouses\":[],\"children\":[]}";
         string spouseJson = "{\"id\":\"" + spouseId + "\",\"name\":\"Spouse\",\"gender\":\"female\",\"yearOfBirth\":1972,\"parents\":[],\"spouses\":[],\"children\":[]}";
-        await FamilyTools.AddPerson(_familyService, parentJson);
-        await FamilyTools.AddPerson(_familyService, childJson);
-        await FamilyTools.AddPerson(_familyService, spouseJson);
+        await FamilyTools.AddPerson(_familyServiceClient, parentJson);
+        await FamilyTools.AddPerson(_familyServiceClient, childJson);
+        await FamilyTools.AddPerson(_familyServiceClient, spouseJson);
 
-        await FamilyTools.AddChild(_familyService, parentId, childId);
-        await FamilyTools.AddSpouse(_familyService, parentId, spouseId);
+        await FamilyTools.AddChild(_familyServiceClient, parentId, childId);
+        await FamilyTools.AddSpouse(_familyServiceClient, parentId, spouseId);
 
         // Act - Update parent's name and year
         string updatedParentJson = "{\"id\":\"" + parentId + "\",\"name\":\"Updated Parent\",\"gender\":\"male\",\"yearOfBirth\":1975,\"parents\":[],\"spouses\":[],\"children\":[]}";
-        var updateResult = await FamilyTools.UpdatePerson(_familyService, parentId, updatedParentJson);
+        var updateResult = await FamilyTools.UpdatePerson(_familyServiceClient, parentId, updatedParentJson);
 
         // Assert
         Assert.IsNotNull(updateResult);
@@ -511,9 +511,9 @@ public class FamilyToolsTests
         Assert.IsFalse(updatedParent.Spouses.Contains(spouseId));
 
         // Cleanup
-        await FamilyTools.DeletePerson(_familyService, childId);
-        await FamilyTools.DeletePerson(_familyService, spouseId);
-        await FamilyTools.DeletePerson(_familyService, parentId);
+        await FamilyTools.DeletePerson(_familyServiceClient, childId);
+        await FamilyTools.DeletePerson(_familyServiceClient, spouseId);
+        await FamilyTools.DeletePerson(_familyServiceClient, parentId);
     }    [TestMethod]
     public async Task T20_LargeFamily_PerformanceTest()
     {
@@ -527,7 +527,7 @@ public class FamilyToolsTests
             var personId = $"perf_test_{i}_{Guid.NewGuid().ToString("N")[..4]}";
             familyMembers.Add(personId);
             string personJson = "{\"id\":\"" + personId + "\",\"name\":\"Person " + i + "\",\"gender\":\"" + (i % 2 == 0 ? "male" : "female") + "\",\"yearOfBirth\":" + (1950 + i) + ",\"parents\":[],\"spouses\":[],\"children\":[]}";
-            await FamilyTools.AddPerson(_familyService, personJson);
+            await FamilyTools.AddPerson(_familyServiceClient, personJson);
         }
         var endTime = DateTime.UtcNow;
 
@@ -536,7 +536,7 @@ public class FamilyToolsTests
         Assert.IsTrue(duration.TotalSeconds < 20); // Should complete within 20 seconds
 
         // Verify all were created
-        var familyResult = await FamilyTools.GetFamily(_familyService);
+        var familyResult = await FamilyTools.GetFamily(_familyServiceClient);
         var family = JsonSerializer.Deserialize<List<Person>>(familyResult);
         Assert.IsNotNull(family);
 
@@ -546,7 +546,7 @@ public class FamilyToolsTests
         // Cleanup
         foreach (var id in familyMembers)
         {
-            await FamilyTools.DeletePerson(_familyService, id);
+            await FamilyTools.DeletePerson(_familyServiceClient, id);
         }
     }
 }
