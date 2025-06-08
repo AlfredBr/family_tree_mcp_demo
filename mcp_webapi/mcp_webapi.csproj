@@ -9,6 +9,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\aspire_servicedefaults\aspire_servicedefaults.csproj" />
     <ProjectReference Include="..\mcp_server\mcp_server.csproj" />
   </ItemGroup>
 </Project>
