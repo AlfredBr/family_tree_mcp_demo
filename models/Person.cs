@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text.Json.Serialization;
 
 namespace FamilyTreeApp;
 
+[DebuggerDisplay("{Id}")]
 public class Person
 {
 	[JsonPropertyName("id")] public required string Id { get; set; }

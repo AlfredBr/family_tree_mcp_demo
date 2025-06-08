@@ -39,7 +39,7 @@ builder.ConfigureServices(
         //var configuration = context.Configuration;
 
         // Add FamilyService
-        services.AddSingleton<FamilyService>();
+        services.AddSingleton<FamilyServiceClient>();
 
         // Add Semantic Kernel
         services.AddKernel();
@@ -63,7 +63,7 @@ var host = builder.Build();
 // Get the required services
 var kernel = host.Services.GetRequiredService<Kernel>();
 var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
-var familyService = host.Services.GetRequiredService<FamilyService>();
+var familyService = host.Services.GetRequiredService<FamilyServiceClient>();
 var logger = host.Services.GetRequiredService<ILogger<Program>>();
 
 // Add the family tools as plugins to the kernel

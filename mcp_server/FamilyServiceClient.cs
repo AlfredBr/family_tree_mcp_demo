@@ -7,22 +7,20 @@ namespace FamilyTreeApp;
 
 #pragma warning disable
 
-public class FamilyService
+public class FamilyServiceClient(HttpClient httpClient, ILogger<FamilyServiceClient> logger)
 {
-    private readonly ILogger<FamilyService> _logger;
-
-    public FamilyService(ILogger<FamilyService> logger)
+    public async Task LogAsync(string message)
     {
-        _logger = logger;
-    }
+        logger.LogInformation(message);
+        await Task.CompletedTask; // Simulate async logging
+	}
 
-    public async Task<List<Person>> GetFamily()
+	public async Task<List<Person>> GetFamily()
     {
-        _logger.LogInformation("Fetching family data from web service...");
+        logger.LogInformation("Fetching family data from web service...");
 
         // Fetch people.json from the web service
-        using var httpClient = new HttpClient();
-        var response = await httpClient.GetAsync("http://localhost:5010/people");
+        var response = await httpClient.GetAsync("/people");
         response.EnsureSuccessStatusCode();
         var peopleJson = await response.Content.ReadAsStringAsync();
         var options = new JsonSerializerOptions
@@ -42,7 +40,7 @@ public class FamilyService
 
     public async Task<Person?> GetPerson(string id)
     {
-        _logger.LogInformation("Fetching person with ID {Id} from web service...", id);
+        logger.LogInformation("Fetching person with ID {Id} from web service...", id);
 
         var people = await GetFamily();
         return people.FirstOrDefault(m =>
@@ -51,15 +49,14 @@ public class FamilyService
 
     public async Task<Person> AddPerson(Person person)
     {
-        _logger.LogInformation("Adding new person with ID {Id} to web service...", person.Id);
+        logger.LogInformation("Adding new person with ID {Id} to web service...", person.Id);
 
-        using var httpClient = new HttpClient();
         var content = new StringContent(
             JsonSerializer.Serialize(person),
             System.Text.Encoding.UTF8,
             "application/json");
 
-        var response = await httpClient.PostAsync("http://localhost:5010/person", content);
+        var response = await httpClient.PostAsync("/person", content);
         response.EnsureSuccessStatusCode();
 
         var resultJson = await response.Content.ReadAsStringAsync();
@@ -80,15 +77,14 @@ public class FamilyService
 
     public async Task<Person> UpdatePerson(string id, Person person)
     {
-        _logger.LogInformation("Updating person with ID {Id} in web service...", id);
+        logger.LogInformation("Updating person with ID {Id} in web service...", id);
 
-        using var httpClient = new HttpClient();
         var content = new StringContent(
             JsonSerializer.Serialize(person),
             System.Text.Encoding.UTF8,
             "application/json");
 
-        var response = await httpClient.PutAsync($"http://localhost:5010/person/{id}", content);
+        var response = await httpClient.PutAsync($"/person/{id}", content);
         response.EnsureSuccessStatusCode();
 
         var resultJson = await response.Content.ReadAsStringAsync();
@@ -109,10 +105,9 @@ public class FamilyService
 
     public async Task DeletePerson(string id)
     {
-        _logger.LogInformation("Deleting person with ID {Id} from web service...", id);
+        logger.LogInformation("Deleting person with ID {Id} from web service...", id);
 
-        using var httpClient = new HttpClient();
-        var response = await httpClient.DeleteAsync($"http://localhost:5010/person/{id}");
+        var response = await httpClient.DeleteAsync($"/person/{id}");
         response.EnsureSuccessStatusCode();
     }
 }

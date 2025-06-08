@@ -6,7 +6,7 @@ builder.AddServiceDefaults();
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<FamilyService>();
+builder.Services.AddSingleton<FamilyServiceClient>();
 
 var app = builder.Build();
 
@@ -23,7 +23,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapGet("/family",
-        async (FamilyService familyService) =>
+        async (FamilyServiceClient familyService) =>
         {
             var people = await familyService.GetFamily();
             return Results.Ok(people);
@@ -33,7 +33,7 @@ app.MapGet("/family",
     .WithOpenApi();
 
 app.MapGet("/family/{id}",
-        async (FamilyService familyService, string id) =>
+        async (FamilyServiceClient familyService, string id) =>
         {
             var person = await familyService.GetPerson(id);
             return person is not null ? Results.Ok(person) : Results.NotFound();
@@ -43,7 +43,7 @@ app.MapGet("/family/{id}",
     .WithOpenApi();
 
 app.MapPost("/family",
-        async (FamilyService familyService, Person person) =>
+        async (FamilyServiceClient familyService, Person person) =>
         {
             try
             {
@@ -69,7 +69,7 @@ app.MapPost("/family",
     .WithOpenApi();
 
 app.MapPut("/family/{id}",
-        async (FamilyService familyService, string id, Person person) =>
+        async (FamilyServiceClient familyService, string id, Person person) =>
         {
             try
             {
@@ -95,7 +95,7 @@ app.MapPut("/family/{id}",
     .WithOpenApi();
 
 app.MapDelete("/family/{id}",
-        async (FamilyService familyService, string id) =>
+        async (FamilyServiceClient familyService, string id) =>
         {
             try
             {
@@ -119,5 +119,7 @@ app.MapDelete("/family/{id}",
     )
     .WithName("DeletePerson")
     .WithOpenApi();
+
+app.MapDefaultEndpoints();
 
 await app.RunAsync();

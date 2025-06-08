@@ -8,9 +8,9 @@ namespace FamilyTreeApp;
 // Family Tools Plugin class to wrap the static FamilyTools methods
 public class FamilyToolsPlugin
 {
-    private readonly FamilyService _familyService;
+    private readonly FamilyServiceClient _familyService;
 
-    public FamilyToolsPlugin(FamilyService familyService)
+    public FamilyToolsPlugin(FamilyServiceClient familyService)
     {
         _familyService = familyService;
     }

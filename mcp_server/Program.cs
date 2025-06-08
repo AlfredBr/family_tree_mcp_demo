@@ -30,7 +30,7 @@ builder.Logging.AddConsole(options =>
 });
 
 // add the family service as a singleton
-builder.Services.AddSingleton<FamilyService>();
+builder.Services.AddSingleton<FamilyServiceClient>();
 
 // Log all discovered MCP tools for diagnostics
 var toolTypes = Assembly.GetExecutingAssembly()

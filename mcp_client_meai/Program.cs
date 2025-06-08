@@ -42,7 +42,7 @@ builder.ConfigureServices(
             throw new InvalidOperationException("API key is required.");
         }
 
-        services.AddSingleton<FamilyService>();
+        services.AddSingleton<FamilyServiceClient>();
 
         // Register ChatClient using Microsoft.Extensions.AI.OpenAI
         services.AddSingleton<IChatClient>(provider =>
@@ -73,7 +73,7 @@ var logger = host.Services.GetRequiredService<ILogger<Program>>();
 // Get ChatClient from DI
 var openAiClient = host.Services.GetRequiredService<IChatClient>();
 var chatClient = new ChatClientBuilder(openAiClient).UseFunctionInvocation().Build();
-var familyService = host.Services.GetRequiredService<FamilyService>();
+var familyService = host.Services.GetRequiredService<FamilyServiceClient>();
 
 // Define local function wrappers for the family tools
 Task<string> GetFamilyAsync() => FamilyTools.GetFamily(familyService);
