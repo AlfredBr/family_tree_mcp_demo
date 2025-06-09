@@ -24,6 +24,7 @@
   <Folder Name="/Web Services/">
     <Project Path="family_webapi/family_webapi.csproj" />
     <Project Path="mcp_webapi/mcp_webapi.csproj" />
+    <Project Path="basic_sse_server/basic_sse_server.csproj" />
   </Folder>
-  <Project Path="models/models.csproj" DisplayName="Models" />
+  <Project Path="models/models.csproj" />
 </Solution>
