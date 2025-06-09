@@ -9,6 +9,7 @@
   <Folder Name="/MCP Client/">
     <Project Path="mcp_client_meai/mcp_client_meai.csproj" />
     <Project Path="mcp_client_sk/mcp_client_sk.csproj" />
+    <Project Path="mcp_client_web/mcp_client_web.csproj" />
   </Folder>
   <Folder Name="/MCP Client/Work in Progress/">
     <Project Path="mcp_client_http/mcp_client_http.csproj" />
@@ -22,9 +23,9 @@
     <Project Path="mcp_tests/mcp_tests.csproj" />
   </Folder>
   <Folder Name="/Web Services/">
+    <Project Path="basic_sse_server/basic_sse_server.csproj" />
     <Project Path="family_webapi/family_webapi.csproj" />
     <Project Path="mcp_webapi/mcp_webapi.csproj" />
-    <Project Path="basic_sse_server/basic_sse_server.csproj" />
   </Folder>
   <Project Path="models/models.csproj" />
 </Solution>
