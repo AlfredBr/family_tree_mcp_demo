@@ -12,6 +12,6 @@
 		<PackageReference Include="Throw" Version="1.4.0" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\models\models.csproj" />
+	  <ProjectReference Include="..\models\Models.csproj" />
 	</ItemGroup>
 </Project>
