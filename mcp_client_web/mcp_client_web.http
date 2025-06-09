@@ -1,0 +1,8 @@
+@host = http://localhost:5295
+
+POST {{host}}/chat/
+Accept: application/json
+
+"Hello World"
+
+###
