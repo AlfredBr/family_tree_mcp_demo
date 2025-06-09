@@ -1,6 +1,6 @@
 @mcp_sse_server_HostAddress = http://localhost:5022
 
-GET {{mcp_sse_server_HostAddress}}/weatherforecast/
+GET {{mcp_sse_server_HostAddress}}/hello/alfredbr
 Accept: application/json
 
 ###
