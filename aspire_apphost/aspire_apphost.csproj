@@ -14,6 +14,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\family_webapi\family_webapi.csproj" />
+    <ProjectReference Include="..\mcp_client_web\mcp_client_web.csproj" />
     <ProjectReference Include="..\mcp_sse_server\mcp_sse_server.csproj" />
     <ProjectReference Include="..\blazor_frontend\blazor_frontend.csproj" />
     <ProjectReference Include="..\mcp_webapi\mcp_webapi.csproj" />

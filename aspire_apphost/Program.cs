@@ -16,4 +16,8 @@ var blazorFrontend = builder.AddProject<Projects.blazor_frontend>("blazor-fronte
 	.WithReference(mcpSseServer)
 	.WaitFor(mcpSseServer)
 	.WithExternalHttpEndpoints();
+var mcpClientWeb = builder.AddProject<Projects.mcp_client_web>("mcp-client-web")
+	.WithReference(mcpSseServer)
+	.WaitFor(mcpSseServer)
+	.WithExternalHttpEndpoints();
 await builder.Build().RunAsync();
