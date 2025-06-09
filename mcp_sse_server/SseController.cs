@@ -36,7 +36,7 @@ public class SseController : ControllerBase
 				await Response.WriteAsync($"data: {dataJson}\n");
 				await Response.Body.FlushAsync();
 			}
-			await Task.Delay(1000);  // send every second
+			await Task.Delay(1000);
 		}
 	}
 }
