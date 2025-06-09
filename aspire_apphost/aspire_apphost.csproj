@@ -17,5 +17,6 @@
     <ProjectReference Include="..\mcp_sse_server\mcp_sse_server.csproj" />
     <ProjectReference Include="..\blazor_frontend\blazor_frontend.csproj" />
     <ProjectReference Include="..\mcp_webapi\mcp_webapi.csproj" />
+    <ProjectReference Include="..\basic_sse_server\basic_sse_server.csproj" />
   </ItemGroup>
 </Project>

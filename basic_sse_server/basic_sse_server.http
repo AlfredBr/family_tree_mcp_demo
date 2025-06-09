@@ -1,0 +1,6 @@
+@sse_server_HostAddress = http://localhost:5011
+
+GET {{sse_server_HostAddress}}/hello/Hello%20World
+Accept: application/json
+
+###

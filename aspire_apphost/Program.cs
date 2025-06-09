@@ -3,6 +3,7 @@
 var builder = DistributedApplication.CreateBuilder(args);
 builder.Environment.ApplicationName = "Aspire AppHost";
 var rawWebApi = builder.AddProject<Projects.family_webapi>("raw-webapi");
+var basicSseServer = builder.AddProject<Projects.basic_sse_server>("basic-sse-server");
 var mcpWebApi = builder.AddProject<Projects.mcp_webapi>("mcp-webapi")
 	.WithReference(rawWebApi)
 	.WaitFor(rawWebApi)
