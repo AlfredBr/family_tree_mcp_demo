@@ -23,11 +23,6 @@ builder.Logging.AddSimpleConsole(options =>
     options.ColorBehavior = LoggerColorBehavior.Enabled; // Corrected namespace usage
     options.SingleLine = true;
 });
-builder.Logging.AddConsole(options =>
-{
-    // Configure all logs to go to stderr
-    options.LogToStandardErrorThreshold = LogLevel.Trace;
-});
 
 // add the family service as a singleton
 builder.Services.AddSingleton<FamilyServiceClient>();
