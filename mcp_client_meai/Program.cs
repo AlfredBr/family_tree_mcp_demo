@@ -22,7 +22,7 @@ builder.ConfigureLogging(logging =>
     logging.ClearProviders();
     logging.AddSimpleConsole(options =>
     {
-		options.TimestampFormat = "HH:mm:ss ";
+        options.TimestampFormat = "HH:mm:ss ";
         options.ColorBehavior = LoggerColorBehavior.Enabled;
         options.SingleLine = true;
     });
@@ -50,10 +50,10 @@ builder.ConfigureServices(
             throw new InvalidOperationException("API key is required.");
         }
 
-		// Get the base address for the Family API
-		var baseAddress = context.Configuration["FamilyApi:BaseAddress"];
+        // Get the base address for the Family API
+        var baseAddress = context.Configuration["FamilyApi:BaseAddress"];
         baseAddress.ThrowIfNull().IfEmpty();
-		services.AddHttpClient<FamilyServiceClient>(client => client.BaseAddress = new(baseAddress));
+        services.AddHttpClient<FamilyServiceClient>(client => client.BaseAddress = new(baseAddress));
 
         // Register ChatClient using Microsoft.Extensions.AI.OpenAI
         services.AddSingleton<IChatClient>(provider =>
@@ -108,7 +108,7 @@ var chatOptions = new ChatOptions
         AIFunctionFactory.Create((string id) => DeletePersonAsync(id)),
         AIFunctionFactory.Create((string id, string spouseId) => AddSpouseAsync(id, spouseId)),
         AIFunctionFactory.Create((string id, string childId) => AddChildAsync(id, childId)),
-	],
+    ],
 };
 
 // Initialize conversation history
@@ -150,8 +150,7 @@ while (true)
                 encouragingMessage,
                 null,
                 cts.Token
-            )
-        )
+            ))
         {
             if (messageUpdate.Role == ChatRole.Assistant)
             {

@@ -7,8 +7,9 @@ using System.Text;
 
 namespace McpClient.Controllers;
 
+#pragma warning disable S6931
+
 [ApiController]
-[Route("[controller]")]
 public class ChatController : ControllerBase
 {
 	private readonly ILogger<ChatController> _logger;
@@ -19,11 +20,17 @@ public class ChatController : ControllerBase
 		_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		_chatClient = chatClient ?? throw new ArgumentNullException(nameof(chatClient));
 
-		_logger = logger;
-		_chatClient = chatClient;
+		_logger.LogInformation("ChatController initialized with IChatClient: {ChatClientType}", _chatClient.GetType().Name);
 	}
 
-	[HttpPost(Name = "Chat")]
+	[HttpGet("/hello")]
+	public string Hello(string message)
+	{
+		_logger.LogInformation("Received hello message: {Message}", message);
+		return $"Hello, {message}";
+	}
+
+	[HttpPost("/chat")]
 	public async Task<string> Chat([FromBody] string message)
 	{
 		_logger.LogInformation("Received chat message: {Message}", message);
@@ -33,8 +40,7 @@ public class ChatController : ControllerBase
 			new SseClientTransport(
 				new SseClientTransportOptions
 				{
-					//Endpoint = new Uri("https+http://mcp-sse-server")
-					Endpoint = new Uri("http://localhost:5002/sse")
+					Endpoint = new Uri("https+http://mcp-sse-server")
 				}
 			)
 		);

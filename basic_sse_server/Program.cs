@@ -46,6 +46,7 @@ app.MapGet("/hello/{message}", (string message) =>
 	var bridge = app.Services.GetRequiredService<Bridge>();
 	bridge.Writer.TryWrite(message);
 	logger.LogInformation("Message sent: {Message}", message);
+	return $"Hello {message}";
 })
 .WithName("GetHello");
 
