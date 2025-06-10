@@ -1,27 +1,27 @@
 using FamilyTreeApp;
 
-using Microsoft.Extensions.Logging.Console;
-
 var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 builder.AddSimpleConsoleLogging();
-
-// Register controllers and Swagger services
+builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+
 builder.Services.AddMcpServer().WithHttpTransport().WithToolsFromAssembly(typeof(FamilyTools).Assembly);
 
 var app = builder.Build();
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+
+app.MapOpenApi();
+app.UseSwaggerUI(options =>
 {
-    app.UseSwagger();
-    app.MapOpenApi();
-}
+	options.SwaggerEndpoint("/openapi/v1.json", "SwaggerUI");
+	options.EnableTryItOutByDefault();
+});
 app.UseHttpsRedirection();
+
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+logger.LogInformation("Starting MCP SSE Server...");
+
 app.MapDefaultEndpoints();
 app.MapMcp();
 
