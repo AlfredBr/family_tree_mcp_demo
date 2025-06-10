@@ -11,14 +11,8 @@ using Throw;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+builder.AddSimpleConsoleLogging();
 builder.Services.AddOpenApi();
-builder.Logging.ClearProviders();
-builder.Logging.AddSimpleConsole(options =>
-{
-    options.TimestampFormat = "HH:mm:ss ";
-    options.ColorBehavior = LoggerColorBehavior.Enabled;
-    options.SingleLine = true;
-});
 
 var app = builder.Build();
 

@@ -4,14 +4,7 @@ using Microsoft.Extensions.Logging.Console;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
-
-builder.Logging.ClearProviders();
-builder.Logging.AddSimpleConsole(options =>
-{
-	options.TimestampFormat = "HH:mm:ss ";
-	options.ColorBehavior = LoggerColorBehavior.Enabled;
-	options.SingleLine = true;
-});
+builder.AddSimpleConsoleLogging();
 
 // Register controllers and Swagger services
 builder.Services.AddControllers();

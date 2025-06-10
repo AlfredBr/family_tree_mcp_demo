@@ -6,18 +6,7 @@ using Throw;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
-
-// Configure logging
-builder.Logging.ClearProviders();
-builder.Logging.AddSimpleConsole(options =>
-	{
-		options.TimestampFormat = "HH:mm:ss ";
-		options.ColorBehavior = LoggerColorBehavior.Enabled;
-		options.SingleLine = true;
-	});
-
-
-// Add services to the container.
+builder.AddSimpleConsoleLogging();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

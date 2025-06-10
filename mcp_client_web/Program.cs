@@ -1,22 +1,15 @@
-using Microsoft.Extensions.AI;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging.Console;
+using mcp_client_web;
 
-using OpenAI;
+using Microsoft.Extensions.AI;
+using Microsoft.Extensions.Logging.Console;
 
 var llmModel = "o4-mini";
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+builder.AddSimpleConsoleLogging();
 builder.Services.AddOpenApi();
-builder.Logging.ClearProviders();
-builder.Logging.AddSimpleConsole(options =>
-{
-	options.TimestampFormat = "HH:mm:ss ";
-	options.ColorBehavior = LoggerColorBehavior.Enabled;
-	options.SingleLine = true;
-});
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
@@ -30,6 +23,14 @@ if (string.IsNullOrEmpty(openAIApiKey))
 	// ```
 	throw new InvalidOperationException("OPENAI_API_KEY environment variable is required");
 }
+
+builder.Services.AddHttpClient<McpSseClient>(client =>
+{
+	// This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
+	// Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
+	//client.BaseAddress = new("https+http://mcp-sse-server");
+	client.BaseAddress = new("https://localhost:7040");
+});
 
 // Register an IChatClient using Microsoft.Extensions.AI.OpenAI
 builder.Services.AddSingleton<IChatClient>(provider =>

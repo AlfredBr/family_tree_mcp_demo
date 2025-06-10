@@ -6,14 +6,8 @@ using Microsoft.Extensions.Logging.Console;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+builder.AddSimpleConsoleLogging();
 builder.Services.AddOpenApi();
-builder.Logging.ClearProviders();
-builder.Logging.AddSimpleConsole(options =>
-{
-	options.TimestampFormat = "HH:mm:ss ";
-	options.ColorBehavior = LoggerColorBehavior.Enabled;
-	options.SingleLine = true;
-});
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSingleton<Bridge>();

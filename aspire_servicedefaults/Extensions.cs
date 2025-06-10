@@ -3,10 +3,14 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 using Microsoft.Extensions.ServiceDiscovery;
+
 using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
+
+#pragma warning disable S125
 
 namespace Microsoft.Extensions.Hosting;
 
@@ -36,10 +40,10 @@ public static class Extensions
         });
 
         // Uncomment the following to restrict the allowed schemes for service discovery.
-        // builder.Services.Configure<ServiceDiscoveryOptions>(options =>
-        // {
-        //     options.AllowedSchemes = ["https"];
-        // });
+        builder.Services.Configure<ServiceDiscoveryOptions>(options =>
+        {
+            options.AllowedSchemes = ["https"];
+        });
 
         return builder;
     }
@@ -103,6 +107,18 @@ public static class Extensions
             // Add a default liveness check to ensure app is responsive
             .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
 
+        return builder;
+    }
+
+    public static TBuilder AddSimpleConsoleLogging<TBuilder>(this TBuilder builder) where TBuilder : IHostApplicationBuilder
+    {
+        builder.Logging.ClearProviders();
+        builder.Logging.AddSimpleConsole(options =>
+        {
+            options.TimestampFormat = "HH:mm:ss ";
+            options.ColorBehavior = LoggerColorBehavior.Enabled;
+            options.SingleLine = true;
+        });
         return builder;
     }
 
