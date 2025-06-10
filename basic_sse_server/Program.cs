@@ -1,5 +1,6 @@
 using basic_sse_server;
 
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging.Console;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,7 +28,7 @@ app.UseSwaggerUI(options =>
 });
 app.UseHttpsRedirection();
 
-app.MapPost("/hello", (string message) =>
+app.MapPost("/hello", ([FromBody] string message) =>
 {
 	var logger = app.Services.GetRequiredService<ILogger<Program>>();
 	var bridge = app.Services.GetRequiredService<Bridge>();
