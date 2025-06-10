@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.AI;
 
 using ModelContextProtocol.Client;
-using ModelContextProtocol.Protocol;
 
 using System.Text;
 
@@ -42,12 +41,13 @@ public class ChatController : ControllerBase
 		var tools = await mcpClient.ListToolsAsync();
 		tools.ThrowIfNull().IfEmpty();
 
+		// Get the pre-prompt instructions
+		var prePromptInstructions = string.Join(" ", FamilyTreeApp.Prompt.PrePromptInstructions);
+
 		// Set up the chat messages
-		var messages = new List<ChatMessage>
-		{
-			new ChatMessage(ChatRole.System, string.Join(" ", FamilyTreeApp.Prompt.PrePromptInstructions))
-		};
-		messages.Add(new(ChatRole.User, message));
+		var messages = new List<ChatMessage>();
+		messages.Add(new ChatMessage(ChatRole.System, prePromptInstructions));
+		messages.Add(new ChatMessage(ChatRole.User, message));
 
 		// Get streaming response and collect updates
 		List<ChatResponseUpdate> updates = [];
