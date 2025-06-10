@@ -1,14 +1,18 @@
 @host = http://localhost:5295
 
-GET {{host}}/hello/there%20friend
-Accept: application/json
+POST {{host}}/hello
+Accept: text/plain
+Content-Type: application/json
+
+"Hello There!"
 
 ###
 
 POST {{host}}/chat/
-Accept: application/json
+Accept: text/plain
+Content-Type: application/json
 
-"Hello World"
+"Hello World, let's chat!"
 
 ###
 

@@ -5,7 +5,9 @@ using ModelContextProtocol.Client;
 
 using System.Text;
 
-namespace McpClient.Controllers;
+using Throw;
+
+namespace mcp_client_web;
 
 #pragma warning disable S6931
 
@@ -14,11 +16,13 @@ public class ChatController : ControllerBase
 {
 	private readonly ILogger<ChatController> _logger;
 	private readonly IChatClient _chatClient;
+	private readonly McpSseClient _mcpSseClient;
 
-	public ChatController(ILogger<ChatController> logger, IChatClient chatClient)
+	public ChatController(ILogger<ChatController> logger, IChatClient chatClient, McpSseClient mcpSseClient)
 	{
 		_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		_chatClient = chatClient ?? throw new ArgumentNullException(nameof(chatClient));
+		_mcpSseClient = mcpSseClient ?? throw new ArgumentNullException(nameof(mcpSseClient));
 
 		_logger.LogInformation("ChatController initialized with IChatClient: {ChatClientType}", _chatClient.GetType().Name);
 	}
@@ -40,12 +44,15 @@ public class ChatController : ControllerBase
 			new SseClientTransport(
 				new SseClientTransportOptions
 				{
-					Endpoint = new Uri("https+http://mcp-sse-server")
+					Endpoint = new Uri($"{_mcpSseClient.Endpoint}/sse")
 				}
 			)
 		);
+
 		// Get available tools from the MCP server
 		var tools = await mcpClient.ListToolsAsync();
+		tools.ThrowIfNull().IfEmpty();
+
 		// Set up the chat messages
 		var messages = new List<ChatMessage>
 		{
