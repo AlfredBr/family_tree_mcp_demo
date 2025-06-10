@@ -12,6 +12,7 @@
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
 		<PackageReference Include="Microsoft.Extensions.AI" />
 		<PackageReference Include="Microsoft.Extensions.AI.OpenAI" />
+		<PackageReference Include="Microsoft.Extensions.ServiceDiscovery.Abstractions " />
 		<PackageReference Include="ModelContextProtocol" />
 		<PackageReference Include="Throw" />
 	</ItemGroup>

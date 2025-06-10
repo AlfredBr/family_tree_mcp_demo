@@ -19,6 +19,7 @@
 		<PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="9.5.0" />
 		<PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.0-preview.5.25277.114" />
 		<PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.3.0" />
+		<PackageVersion Include="Microsoft.Extensions.ServiceDiscovery.Abstractions" Version="9.3.0" />
 		<PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
 		<PackageVersion Include="Microsoft.SemanticKernel" Version="1.55.0" />
 
