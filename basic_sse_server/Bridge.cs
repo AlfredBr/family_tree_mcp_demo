@@ -1,6 +1,6 @@
 ﻿using System.Threading.Channels;
 
-namespace sse_server;
+namespace basic_sse_server;
 
 public class Bridge
 {

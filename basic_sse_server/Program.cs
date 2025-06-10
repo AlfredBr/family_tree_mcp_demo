@@ -1,10 +1,11 @@
-using sse_server;
+using basic_sse_server;
 
 using Microsoft.Extensions.Logging.Console;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.AddServiceDefaults();
 
+builder.AddServiceDefaults();
+builder.Services.AddOpenApi();
 builder.Logging.ClearProviders();
 builder.Logging.AddSimpleConsole(options =>
 {
@@ -12,44 +13,31 @@ builder.Logging.AddSimpleConsole(options =>
 	options.ColorBehavior = LoggerColorBehavior.Enabled;
 	options.SingleLine = true;
 });
-
-// Register controllers and Swagger services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
 builder.Services.AddSingleton<Bridge>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.MapOpenApi();
+app.UseSwaggerUI(options =>
 {
-	app.UseSwagger();
-	app.UseSwaggerUI(options =>
-	{
-		options.ConfigObject.AdditionalItems["tryItOutEnabled"] = true;
-	});
-	app.MapOpenApi();
-}
-
+	options.SwaggerEndpoint("/openapi/v1.json", "SwaggerUI");
+	options.EnableTryItOutByDefault();
+});
 app.UseHttpsRedirection();
-app.MapControllers();
 
-app.MapGet("/hello/{message}", (string message) =>
+app.MapPost("/hello", (string message) =>
 {
 	var logger = app.Services.GetRequiredService<ILogger<Program>>();
 	var bridge = app.Services.GetRequiredService<Bridge>();
 	bridge.Writer.TryWrite(message);
 	logger.LogInformation("Message sent: {Message}", message);
-	return $"Hello {message}";
+	return $"/hello '{message}'";
 })
-.WithName("GetHello");
+.WithName("SayHello");
 
+app.MapControllers();
 app.MapDefaultEndpoints();
 
 await app.RunAsync();

@@ -2,7 +2,7 @@
 
 using System.Text.Json;
 
-namespace sse_server;
+namespace basic_sse_server;
 
 #pragma warning disable S6931
 

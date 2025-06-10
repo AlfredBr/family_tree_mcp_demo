@@ -1,15 +1,17 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using Microsoft.Extensions.Logging.Console;
 using FamilyTreeApp;
-using System.Collections.Concurrent;
+
+using Microsoft.Extensions.Logging.Console;
+
+using System.Text.Json;
+
+using Throw;
 
 #pragma warning disable S125
 
 var builder = WebApplication.CreateBuilder(args);
-builder.AddServiceDefaults();
 
-// Add logging configuration
+builder.AddServiceDefaults();
+builder.Services.AddOpenApi();
 builder.Logging.ClearProviders();
 builder.Logging.AddSimpleConsole(options =>
 {
@@ -20,12 +22,16 @@ builder.Logging.AddSimpleConsole(options =>
 
 var app = builder.Build();
 
-// Get logger
-var logger = app.Services.GetRequiredService<ILogger<Program>>();
+app.MapOpenApi();
+app.UseSwaggerUI(options =>
+{
+	options.SwaggerEndpoint("/openapi/v1.json", "SwaggerUI");
+	options.EnableTryItOutByDefault();
+});
+app.UseHttpsRedirection();
 
-// File path for people.json
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
 const string PeopleFile = "people.json";
-// Mutex for concurrency control
 var fileLock = new object();
 
 // Helper: Read all people from file
@@ -41,7 +47,8 @@ List<Person> ReadPeople()
 
             }
             var json = File.ReadAllText(PeopleFile);
-            var people = JsonSerializer.Deserialize<List<Person>>(json) ?? new List<Person>();
+			json.ThrowIfNull().IfEmpty();
+			var people = JsonSerializer.Deserialize<List<Person>>(json) ?? new List<Person>();
             logger.LogInformation("Read {Count} people from {File}", people.Count, PeopleFile);
             return people;
         }
@@ -59,6 +66,7 @@ void WritePeople(List<Person> people)
     lock (fileLock)
     {
         var json = JsonSerializer.Serialize(people, new JsonSerializerOptions { WriteIndented = true });
+        json.ThrowIfNull().IfEmpty();
         File.WriteAllText(PeopleFile, json);
         logger.LogInformation("Wrote {Count} people to {File}", people.Count, PeopleFile);
     }

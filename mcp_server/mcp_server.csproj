@@ -6,10 +6,10 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Microsoft.SemanticKernel" Version="1.55.0" />
-		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0-preview.5.25277.114" />
-		<PackageReference Include="ModelContextProtocol" Version="0.2.0-preview.3" />
-		<PackageReference Include="Throw" Version="1.4.0" />
+		<PackageReference Include="Microsoft.SemanticKernel" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" />
+		<PackageReference Include="ModelContextProtocol" />
+		<PackageReference Include="Throw" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\models\models.csproj" />
