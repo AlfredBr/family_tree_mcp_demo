@@ -8,14 +8,16 @@
 
 	<ItemGroup>
 		<PackageReference Include="Swashbuckle.AspNetCore" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" />
 		<PackageReference Include="Microsoft.Extensions.AI" />
 		<PackageReference Include="Microsoft.Extensions.AI.OpenAI" />
 		<PackageReference Include="ModelContextProtocol" />
+		<PackageReference Include="Throw" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\aspire_servicedefaults\aspire_servicedefaults.csproj" />
+		<ProjectReference Include="..\aspire_servicedefaults\aspire_servicedefaults.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -23,8 +23,8 @@ public class ChatController : ControllerBase
 		_logger.LogInformation("ChatController initialized with IChatClient: {ChatClientType}", _chatClient.GetType().Name);
 	}
 
-	[HttpGet("/hello")]
-	public string Hello(string message)
+	[HttpPost("/hello")]
+	public string Hello([FromBody] string message)
 	{
 		_logger.LogInformation("Received hello message: {Message}", message);
 		return $"Hello, {message}";

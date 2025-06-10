@@ -7,7 +7,9 @@ using OpenAI;
 var llmModel = "o4-mini";
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.AddServiceDefaults();
+builder.Services.AddOpenApi();
 builder.Logging.ClearProviders();
 builder.Logging.AddSimpleConsole(options =>
 {
@@ -17,8 +19,6 @@ builder.Logging.AddSimpleConsole(options =>
 });
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddOpenApi();
 
 // Get OpenAI API key from environment variable
 var openAIApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
@@ -37,22 +37,15 @@ builder.Services.AddSingleton<IChatClient>(provider =>
 		.UseFunctionInvocation()
 		.Build());
 
-// Add Swagger
-builder.Services.AddSwaggerGen(c =>
-{
-	c.SwaggerDoc("v1", new() { Title = "MCP Client Web API", Version = "v1" });
-});
-
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.MapOpenApi();
+app.UseSwaggerUI(options =>
 {
-    app.MapOpenApi();
-}
-
+	options.SwaggerEndpoint("/openapi/v1.json", "SwaggerUI");
+	options.EnableTryItOutByDefault();
+});
 app.UseHttpsRedirection();
-app.MapControllers();
 
 app.MapGet("/hello", () =>
 {
@@ -60,6 +53,7 @@ app.MapGet("/hello", () =>
 })
 .WithName("SayHello");
 
+app.MapControllers();
 app.MapDefaultEndpoints();
 
 await app.RunAsync();
