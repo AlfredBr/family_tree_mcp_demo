@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging.Console;
 
 using ModelContextProtocol.Server;
 
-using System.ComponentModel;
 using System.Reflection;
 
 #pragma warning disable S125

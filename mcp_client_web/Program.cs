@@ -46,13 +46,6 @@ app.UseSwaggerUI(options =>
 });
 app.UseHttpsRedirection();
 
-app.MapGet("/hello", () =>
-{
-    return "Hello World!";
-})
-.WithName("SayHello")
-.WithOpenApi();
-
 app.MapControllers();
 app.MapDefaultEndpoints();
 

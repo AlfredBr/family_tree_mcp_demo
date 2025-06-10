@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.AI;
 
 using ModelContextProtocol.Client;
+using ModelContextProtocol.Protocol;
 
 using System.Text;
 
@@ -27,17 +28,10 @@ public class ChatController : ControllerBase
 		_logger.LogInformation("ChatController initialized with IChatClient: {ChatClientType}", _chatClient.GetType().Name);
 	}
 
-	[HttpPost("/hello")]
-	public string Hello([FromBody] string message)
-	{
-		_logger.LogInformation("Received hello message: {Message}", message);
-		return $"Hello, {message}";
-	}
-
 	[HttpPost("/chat")]
 	public async Task<string> Chat([FromBody] string message)
 	{
-		_logger.LogInformation("Received chat message: {Message}", message);
+		_logger.LogInformation("Received Chat message: '{Message}'", message);
 
 		// Create MCP client connecting to our MCP server
 		var mcpClient = await _mcpSseClient.CreateAsync();
@@ -51,9 +45,10 @@ public class ChatController : ControllerBase
 		// Set up the chat messages
 		var messages = new List<ChatMessage>
 		{
-			new ChatMessage(ChatRole.System, "You are a helpful assistant.")
+			new ChatMessage(ChatRole.System, string.Join(" ", FamilyTreeApp.Prompt.PrePromptInstructions))
 		};
 		messages.Add(new(ChatRole.User, message));
+
 		// Get streaming response and collect updates
 		List<ChatResponseUpdate> updates = [];
 		var result = new StringBuilder();
@@ -66,8 +61,12 @@ public class ChatController : ControllerBase
 			result.Append(update);
 			updates.Add(update);
 		}
+
 		// Add the assistant's responses to the message history
 		messages.AddMessages(updates);
-		return result.ToString();
+		var response = result.ToString();
+
+		_logger.LogInformation("Returning Chat response: {Response}", response);
+		return response;
 	}
 }
