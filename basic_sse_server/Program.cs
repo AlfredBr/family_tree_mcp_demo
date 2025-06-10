@@ -1,10 +1,8 @@
 using basic_sse_server;
 
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging.Console;
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.AddServiceDefaults();
 builder.AddSimpleConsoleLogging();
 builder.Services.AddOpenApi();
@@ -22,9 +20,11 @@ app.UseSwaggerUI(options =>
 });
 app.UseHttpsRedirection();
 
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+logger.LogInformation("Starting Basic SSE Server...");
+
 app.MapPost("/hello", ([FromBody] string message) =>
 {
-	var logger = app.Services.GetRequiredService<ILogger<Program>>();
 	var bridge = app.Services.GetRequiredService<Bridge>();
 	bridge.Writer.TryWrite(message);
 	logger.LogInformation("Message sent: {Message}", message);
