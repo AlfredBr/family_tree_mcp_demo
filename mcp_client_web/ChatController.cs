@@ -40,14 +40,9 @@ public class ChatController : ControllerBase
 		_logger.LogInformation("Received chat message: {Message}", message);
 
 		// Create MCP client connecting to our MCP server
-		var mcpClient = await McpClientFactory.CreateAsync(
-			new SseClientTransport(
-				new SseClientTransportOptions
-				{
-					Endpoint = new Uri($"{_mcpSseClient.Endpoint}/sse")
-				}
-			)
-		);
+		var mcpClient = await _mcpSseClient.CreateAsync();
+		mcpClient.ThrowIfNull();
+		_logger.LogInformation("MCP client created: {McpClientType}", mcpClient.GetType().Name);
 
 		// Get available tools from the MCP server
 		var tools = await mcpClient.ListToolsAsync();

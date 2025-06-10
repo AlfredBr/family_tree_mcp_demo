@@ -1,7 +1,6 @@
 using mcp_client_web;
 
 using Microsoft.Extensions.AI;
-using Microsoft.Extensions.Logging.Console;
 
 var llmModel = "o4-mini";
 
@@ -28,8 +27,7 @@ builder.Services.AddHttpClient<McpSseClient>(client =>
 {
 	// This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
 	// Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
-	//client.BaseAddress = new("https+http://mcp-sse-server");
-	client.BaseAddress = new("https://localhost:7040");
+	client.BaseAddress = new("https+http://mcp-sse-server");
 });
 
 // Register an IChatClient using Microsoft.Extensions.AI.OpenAI
@@ -52,7 +50,8 @@ app.MapGet("/hello", () =>
 {
     return "Hello World!";
 })
-.WithName("SayHello");
+.WithName("SayHello")
+.WithOpenApi();
 
 app.MapControllers();
 app.MapDefaultEndpoints();
