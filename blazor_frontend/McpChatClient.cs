@@ -13,8 +13,8 @@ public class McpChatClient(HttpClient httpClient)
 			return null;
 		}
 
-		// Create a timeout policy with a 60-second limit
-		var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(60));
+		// Create a timeout policy with no limit
+		var timeoutPolicy = Policy.TimeoutAsync<HttpResponseMessage>(Timeout.InfiniteTimeSpan);
 
 		// Use the policy when sending your request
 		var response = await timeoutPolicy.ExecuteAsync(async ct =>
@@ -24,6 +24,7 @@ public class McpChatClient(HttpClient httpClient)
 		{
 			return await response.Content.ReadAsStringAsync(cancellationToken);
 		}
+
 		var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
 		throw new HttpRequestException($"Chat request failed with status code {response.StatusCode}: {errorContent}");
 	}
