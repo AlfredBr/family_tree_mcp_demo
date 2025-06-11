@@ -48,6 +48,7 @@ app.UseSwaggerUI(options =>
 {
 	options.SwaggerEndpoint("/openapi/v1.json", "SwaggerUI");
 	options.EnableTryItOutByDefault();
+	options.DisplayRequestDuration();
 });
 app.UseHttpsRedirection();
 

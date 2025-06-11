@@ -1,9 +1,14 @@
-﻿.chat-container {
+﻿* {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+.chat-container {
     max-height: 70vh;
     overflow-y: auto;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 0px solid #ccc;
     margin-bottom: 10px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 .message {
@@ -12,20 +17,25 @@
     border-radius: 10px;
     width: fit-content;
     max-width: 70%;
+    font-family: inherit;
 }
 
 .user-message {
-    background-color: #007BFF;
+    background-color: #007AFF;
     color: white;
     margin-left: auto;
     text-align: right;
+    border-radius: 10px;
+    font-family: inherit;
 }
 
 .ai-message {
-    background-color: #f0f0f0;
+    background-color: #D3D3D3;
     color: black;
     margin-right: auto;
     text-align: left;
+    border-radius: 10px;
+    font-family: inherit;
 }
 
 .error-message {
@@ -33,17 +43,32 @@
     color: white;
     margin-right: auto;
     text-align: left;
+    border-radius: 10px;
+    font-family: inherit;
 }
 
 .thinking-message {
     font-style: italic;
     color: gray;
     text-align: left;
+    border-radius: 10px;
+    font-family: inherit;
 }
 
 .chat-input {
-    width: 100%;
+    position: fixed;
+    bottom: 5px;
+    left: 5px;
+    right: 5px;
     box-sizing: border-box;
     padding: 10px;
     font-size: 16px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    border-radius: 10px;
+    border: 1px solid #ccc;
 }
+
+    .chat-input:focus {
+        border-color: #007AFF;
+        outline: none;
+    }

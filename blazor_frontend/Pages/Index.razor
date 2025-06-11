@@ -2,7 +2,7 @@
 @inject McpChatClient chatClient
 @inject IJSRuntime jsRuntime
 
-<h3>FamilyTree Chat App</h3>
+<h3 style="text-align: center;">FamilyTree Chat App</h3>
 <div id="chat-container" class="chat-container">
     @foreach (var msg in messages)
     {
@@ -12,7 +12,7 @@
     }
     @if (isThinking)
     {
-        <div class="message thinking-message">AI is thinking...</div>
+        <div class="message thinking-message">The AI is thinking...</div>
     }
 </div>
 <input @bind="inputText" @bind:event="oninput" placeholder="Type your message..." @onkeydown="HandleKeyDown" class="chat-input" />
