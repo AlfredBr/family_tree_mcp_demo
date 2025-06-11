@@ -27,13 +27,13 @@ var mcpSseServer = builder.AddProject<Projects.mcp_sse_server>("mcp-sse-server")
 	.WithReference(rawWebApi)
 	.WaitFor(rawWebApi)
 	.WithExternalHttpEndpoints();
-var blazorFrontend = builder.AddProject<Projects.blazor_frontend>("blazor-frontend")
-	.WithReference(mcpSseServer)
-	.WaitFor(mcpSseServer)
-	.WithExternalHttpEndpoints();
 var mcpClientWeb = builder.AddProject<Projects.mcp_client_web>("mcp-client-web")
 	.WithReference(mcpSseServer)
 	.WaitFor(mcpSseServer)
+	.WithExternalHttpEndpoints();
+var blazorFrontend = builder.AddProject<Projects.blazor_frontend>("blazor-frontend")
+	.WithReference(mcpClientWeb)
+	.WaitFor(mcpClientWeb)
 	.WithExternalHttpEndpoints();
 
 await builder.Build().RunAsync();

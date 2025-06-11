@@ -1,37 +1,24 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.Extensions.Logging.Console;
+using blazor_frontend;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
-builder.Services.AddLogging(logging =>
-{
-    logging.ClearProviders();
-    logging.AddSimpleConsole(options =>
-    {
-        options.TimestampFormat = "HH:mm:ss ";
-        options.ColorBehavior = LoggerColorBehavior.Enabled;
-        options.SingleLine = true;
-    });
-});
-
+builder.AddSimpleConsoleLogging();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-var app = builder.Build();
-
-if (!app.Environment.IsDevelopment())
+builder.Services.AddHttpClient<McpChatClient>(client =>
 {
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
-}
+	// This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
+	// Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
+	client.Timeout = Timeout.InfiniteTimeSpan;
+	client.BaseAddress = new("https+http://mcp-client-web");
+});
 
+var app = builder.Build();
+app.UseHsts();
 app.UseHttpsRedirection();
-
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 app.MapDefaultEndpoints();

@@ -11,6 +11,7 @@ builder.Services.AddHttpClient<FamilyServiceClient>(client =>
 {
 	// This URL uses "https+http://" to indicate HTTPS is preferred over HTTP.
 	// Learn more about service discovery scheme resolution at https://aka.ms/dotnet/sdschemes.
+	client.Timeout = Timeout.InfiniteTimeSpan; // Set timeout to infinite for SSE
 	client.BaseAddress = new("https+http://raw-webapi");
 });
 
