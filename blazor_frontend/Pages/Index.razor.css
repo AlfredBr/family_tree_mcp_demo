@@ -4,7 +4,12 @@
 
 h3 {
     margin: 0;
+    margin-bottom: 4px;
     padding: 0;
+    padding-bottom: 4px;
+    background: #e4eef7;
+    border-radius: 5px;
+    border: 1px solid #e4eeFF;
 }
 
 html, body {
@@ -77,6 +82,7 @@ html, body {
 }
 
 .chat-input {
+    background: #e4eef7;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 5px;
