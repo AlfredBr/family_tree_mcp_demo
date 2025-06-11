@@ -11,6 +11,7 @@ builder.AddSimpleConsoleLogging();
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddMemoryCache();
 
 // Get OpenAI API key from environment variable
 var openAIApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
@@ -35,6 +36,9 @@ builder.Services.AddSingleton<IChatClient>(provider =>
 	new ChatClientBuilder(new OpenAI.Chat.ChatClient(llmModel, openAIApiKey).AsIChatClient())
 		.UseFunctionInvocation()
 		.Build());
+
+// Register ChatHistoryService in your DI container
+builder.Services.AddSingleton<ChatHistoryService>();
 
 var app = builder.Build();
 
