@@ -38,6 +38,11 @@
     font-family: inherit;
 }
 
+.user-message,
+.ai-message {
+    white-space: pre-wrap;
+}
+
 .error-message {
     background-color: black;
     color: white;
