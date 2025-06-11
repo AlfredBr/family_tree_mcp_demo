@@ -7,7 +7,7 @@
     <div id="chat-container" class="chat-container">
         @foreach (var msg in messages)
         {
-            <div class="message @(msg.Type == ChatMessageType.User ? "user-message" : msg.Type == ChatMessageType.AI ? "ai-message" : "error-message")">
+            <div class="message @GetMessageClass(msg.Type)">
                 @msg.Text
             </div>
         }
@@ -47,7 +47,7 @@
 
         try
         {
-            var response = await chatClient.Chat(messages.Last().Text);
+            var response = await chatClient.Chat(messages[messages.Count - 1].Text);
             messages.Add(new ChatMessage { Text = response ?? "", Type = ChatMessageType.AI });
         }
         catch (Exception ex)
@@ -66,6 +66,16 @@
         await jsRuntime.InvokeVoidAsync("scrollChatToBottom");
     }
 
+    private string GetMessageClass(ChatMessageType type)
+    {
+        return type switch
+        {
+            ChatMessageType.User => "user-message",
+            ChatMessageType.AI => "ai-message",
+            _ => "error-message",
+        };
+    }
+
     public class ChatMessage
     {
         public string Text { get; set; } = "";
@@ -79,4 +89,3 @@
         Error
     }
 }
-
