@@ -2,20 +2,22 @@
 @inject McpChatClient chatClient
 @inject IJSRuntime jsRuntime
 
-<h3 style="text-align: center;">FamilyTree Chat App</h3>
-<div id="chat-container" class="chat-container">
-    @foreach (var msg in messages)
-    {
-        <div class="message @(msg.Type == ChatMessageType.User ? "user-message" : msg.Type == ChatMessageType.AI ? "ai-message" : "error-message")">
-            @msg.Text
-        </div>
-    }
-    @if (isThinking)
-    {
-        <div class="message thinking-message">The AI is thinking...</div>
-    }
+<div class="chat-wrapper">
+    <h3 style="text-align: center;">FamilyTree Chat App</h3>
+    <div id="chat-container" class="chat-container">
+        @foreach (var msg in messages)
+        {
+            <div class="message @(msg.Type == ChatMessageType.User ? "user-message" : msg.Type == ChatMessageType.AI ? "ai-message" : "error-message")">
+                @msg.Text
+            </div>
+        }
+        @if (isThinking)
+        {
+            <div class="message thinking-message">The AI is thinking...</div>
+        }
+    </div>
+    <input @bind="inputText" @bind:event="oninput" placeholder="Type your message..." @onkeydown="HandleKeyDown" class="chat-input" />
 </div>
-<input @bind="inputText" @bind:event="oninput" placeholder="Type your message..." @onkeydown="HandleKeyDown" class="chat-input" />
 
 @code {
     private string inputText = "";

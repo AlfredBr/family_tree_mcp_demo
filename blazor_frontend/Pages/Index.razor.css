@@ -2,8 +2,19 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.chat-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 90vh; /* Full viewport height */
+}
+
 .chat-container {
-    max-height: 70vh;
+    flex: 1;
     overflow-y: auto;
     padding: 10px;
     border: 0px solid #ccc;
@@ -61,16 +72,18 @@
 }
 
 .chat-input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: calc(100% - 20px); /* Account for padding */
+    margin: 10px;
     position: fixed;
     bottom: 5px;
     left: 5px;
     right: 5px;
     box-sizing: border-box;
-    padding: 10px;
     font-size: 16px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-    border-radius: 10px;
-    border: 1px solid #ccc;
 }
 
     .chat-input:focus {
