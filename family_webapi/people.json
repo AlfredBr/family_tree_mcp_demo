@@ -4,6 +4,7 @@
     "name": "William Carter",
     "gender": "male",
     "yearOfBirth": 1945,
+    "placeOfBirth": "Wellington, New Zealand",
     "parents": [],
     "spouses": [
       "p2"
@@ -18,6 +19,7 @@
     "name": "Margaret Carter",
     "gender": "female",
     "yearOfBirth": 1947,
+    "placeOfBirth": "Dublin, Ireland",
     "parents": [],
     "spouses": [
       "p1"
@@ -32,6 +34,7 @@
     "name": "Elizabeth Carter",
     "gender": "female",
     "yearOfBirth": 1970,
+    "placeOfBirth": "Seville, Spain",
     "parents": [
       "p1",
       "p2"
@@ -49,6 +52,7 @@
     "name": "James Carter",
     "gender": "male",
     "yearOfBirth": 1972,
+    "placeOfBirth": "Barcelona, Spain",
     "parents": [
       "p1",
       "p2"
@@ -62,9 +66,10 @@
   },
   {
     "id": "p5",
-    "name": "Linda Carter (n\u00E9e Evans)",
+    "name": "Linda Carter (n\u00e9e Evans)",
     "gender": "female",
     "yearOfBirth": 1973,
+    "placeOfBirth": "Cape Town, South Africa",
     "parents": [
       "p12",
       "p13"
@@ -81,6 +86,7 @@
     "name": "Michael Evans",
     "gender": "male",
     "yearOfBirth": 1975,
+    "placeOfBirth": "Johannesburg, South Africa",
     "parents": [
       "p12",
       "p13"
@@ -98,6 +104,7 @@
     "name": "David Smith",
     "gender": "male",
     "yearOfBirth": 1968,
+    "placeOfBirth": "Perth, Australia",
     "parents": [
       "p16",
       "p17"
@@ -112,9 +119,10 @@
   },
   {
     "id": "p8",
-    "name": "Susan Smith (n\u00E9e Brown)",
+    "name": "Susan Smith (n\u00e9e Brown)",
     "gender": "female",
     "yearOfBirth": 1976,
+    "placeOfBirth": "Auckland, New Zealand",
     "parents": [
       "p18",
       "p19"
@@ -132,6 +140,7 @@
     "name": "Emily Smith",
     "gender": "female",
     "yearOfBirth": 1995,
+    "placeOfBirth": "Reykjavik, Iceland",
     "parents": [
       "p3",
       "p7"
@@ -148,6 +157,7 @@
     "name": "Matthew Smith",
     "gender": "male",
     "yearOfBirth": 1998,
+    "placeOfBirth": "Akureyri, Iceland",
     "parents": [
       "p3",
       "p7"
@@ -164,6 +174,7 @@
     "name": "Sophie Carter",
     "gender": "female",
     "yearOfBirth": 2000,
+    "placeOfBirth": "Prague, Czech Republic",
     "parents": [
       "p4",
       "p5"
@@ -178,6 +189,7 @@
     "name": "Robert Evans",
     "gender": "male",
     "yearOfBirth": 1950,
+    "placeOfBirth": "Lisbon, Portugal",
     "parents": [],
     "spouses": [
       "p13"
@@ -192,6 +204,7 @@
     "name": "Patricia Evans",
     "gender": "female",
     "yearOfBirth": 1952,
+    "placeOfBirth": "Edinburgh, United Kingdom",
     "parents": [],
     "spouses": [
       "p12"
@@ -206,6 +219,7 @@
     "name": "Daniel Evans",
     "gender": "male",
     "yearOfBirth": 2002,
+    "placeOfBirth": "Lille, France",
     "parents": [
       "p6",
       "p8"
@@ -221,6 +235,7 @@
     "name": "Olivia Evans",
     "gender": "female",
     "yearOfBirth": 2005,
+    "placeOfBirth": "Nice, France",
     "parents": [
       "p6",
       "p8"
@@ -235,6 +250,7 @@
     "name": "George Smith",
     "gender": "male",
     "yearOfBirth": 1943,
+    "placeOfBirth": "Bilbao, Spain",
     "parents": [],
     "spouses": [
       "p17"
@@ -248,6 +264,7 @@
     "name": "Helen Smith",
     "gender": "female",
     "yearOfBirth": 1944,
+    "placeOfBirth": "Bologna, Italy",
     "parents": [],
     "spouses": [
       "p16"
@@ -261,6 +278,7 @@
     "name": "Thomas Brown",
     "gender": "male",
     "yearOfBirth": 1950,
+    "placeOfBirth": "Odessa, Ukraine",
     "parents": [],
     "spouses": [
       "p19"
@@ -274,6 +292,7 @@
     "name": "Barbara Brown",
     "gender": "female",
     "yearOfBirth": 1951,
+    "placeOfBirth": "Brno, Czech Republic",
     "parents": [],
     "spouses": [
       "p18"
@@ -287,6 +306,7 @@
     "name": "Lucas Carter",
     "gender": "male",
     "yearOfBirth": 2024,
+    "placeOfBirth": "Ghent, Belgium",
     "parents": [
       "p9"
     ],
@@ -298,6 +318,7 @@
     "name": "Grace Carter",
     "gender": "female",
     "yearOfBirth": 2023,
+    "placeOfBirth": "Krakow, Poland",
     "parents": [
       "p10"
     ],
@@ -309,6 +330,7 @@
     "name": "Henry Carter",
     "gender": "male",
     "yearOfBirth": 2025,
+    "placeOfBirth": "Valencia, Spain",
     "parents": [
       "p11"
     ],
@@ -320,6 +342,7 @@
     "name": "Sophia Evans",
     "gender": "female",
     "yearOfBirth": 2022,
+    "placeOfBirth": "Antwerp, Belgium",
     "parents": [
       "p15"
     ],
@@ -331,6 +354,7 @@
     "name": "Jack Evans",
     "gender": "male",
     "yearOfBirth": 2024,
+    "placeOfBirth": "Turin, Italy",
     "parents": [
       "p14"
     ],
@@ -342,6 +366,7 @@
     "name": "Isabella Evans",
     "gender": "female",
     "yearOfBirth": 2025,
+    "placeOfBirth": "Genoa, Italy",
     "parents": [
       "p14"
     ],
@@ -353,6 +378,7 @@
     "name": "Mason Carter",
     "gender": "male",
     "yearOfBirth": 2025,
+    "placeOfBirth": "Antwerp, Belgium",
     "parents": [
       "p9"
     ],
@@ -364,6 +390,7 @@
     "name": "Ava Carter",
     "gender": "female",
     "yearOfBirth": 2025,
+    "placeOfBirth": "Gdansk, Poland",
     "parents": [
       "p10"
     ],
@@ -375,6 +402,7 @@
     "name": "Noah Smith",
     "gender": "male",
     "yearOfBirth": 2024,
+    "placeOfBirth": "Bruges, Belgium",
     "parents": [
       "p9"
     ],
@@ -386,6 +414,7 @@
     "name": "Mia Smith",
     "gender": "female",
     "yearOfBirth": 2025,
+    "placeOfBirth": "Warsaw, Poland",
     "parents": [
       "p10"
     ],
@@ -397,6 +426,7 @@
     "name": "Alex Johnson",
     "gender": "male",
     "yearOfBirth": 1980,
+    "placeOfBirth": "Utrecht, Netherlands",
     "parents": [],
     "spouses": [
       "p31"
@@ -411,6 +441,7 @@
     "name": "Emily Johnson",
     "gender": "female",
     "yearOfBirth": 1982,
+    "placeOfBirth": "Zagreb, Croatia",
     "parents": [],
     "spouses": [
       "p30"
@@ -425,6 +456,7 @@
     "name": "Ella Johnson",
     "gender": "female",
     "yearOfBirth": 2010,
+    "placeOfBirth": "Varanasi, India",
     "parents": [
       "p30",
       "p31"
@@ -437,6 +469,7 @@
     "name": "Liam Johnson",
     "gender": "male",
     "yearOfBirth": 2012,
+    "placeOfBirth": "Delhi, India",
     "parents": [
       "p30",
       "p31"
@@ -449,6 +482,7 @@
     "name": "Olivia Martinez",
     "gender": "female",
     "yearOfBirth": 1990,
+    "placeOfBirth": "Cusco, Peru",
     "parents": [],
     "spouses": [],
     "children": []
@@ -458,6 +492,7 @@
     "name": "Benjamin Lee",
     "gender": "male",
     "yearOfBirth": 1978,
+    "placeOfBirth": "Lviv, Ukraine",
     "parents": [],
     "spouses": [
       "p36"
@@ -471,6 +506,7 @@
     "name": "Chloe Lee",
     "gender": "female",
     "yearOfBirth": 1980,
+    "placeOfBirth": "Graz, Austria",
     "parents": [],
     "spouses": [
       "p35"
@@ -484,6 +520,7 @@
     "name": "Lucas Lee",
     "gender": "male",
     "yearOfBirth": 2015,
+    "placeOfBirth": "Manaus, Brazil",
     "parents": [
       "p35",
       "p36"
@@ -496,6 +533,7 @@
     "name": "Harper Kim",
     "gender": "female",
     "yearOfBirth": 2000,
+    "placeOfBirth": "Chiang Mai, Thailand",
     "parents": [],
     "spouses": [],
     "children": []
@@ -505,6 +543,7 @@
     "name": "Ethan Patel",
     "gender": "male",
     "yearOfBirth": 1995,
+    "placeOfBirth": "Da Nang, Vietnam",
     "parents": [],
     "spouses": [],
     "children": []
@@ -514,6 +553,7 @@
     "name": "Charlotte Nguyen",
     "gender": "female",
     "yearOfBirth": 1985,
+    "placeOfBirth": "Cork, Ireland",
     "parents": [],
     "spouses": [],
     "children": []
