@@ -71,13 +71,13 @@ html, body {
 
 .thinking-message {
     font-style: italic;
-    color: gray;
+    color: #b8a06f;
     text-align: left;
     border-radius: 10px;
 }
 
 .chat-input {
-    border: 2px solid #b8a06f;
+    border: 1px solid gray;
     background-color: #f9f8f6;
     padding: 8px;
     border-radius: 5px;
@@ -91,7 +91,7 @@ html, body {
 }
 
     .chat-input:focus {
-        border-color: #007AFF;
+        border: 2px solid #b8a06f;
         outline: none;
     }
 
