@@ -8,14 +8,14 @@ html, body {
     margin: 0;
 }
 
-h3 {
+.logo {
+    text-align: center;
     margin: 0;
-    margin-bottom: 4px;
     padding: 0;
-    padding-bottom: 4px;
-    background: #e4eef7;
+    padding-top: 4px;
     border-radius: 5px;
-    border: 1px solid #e4eeFF;
+    border: 2px solid #b8a06f;
+    background-color: #f9f8f6;
 }
 
 .chat-wrapper {
@@ -77,9 +77,9 @@ h3 {
 }
 
 .chat-input {
-    background: #e4eef7;
+    border: 2px solid #b8a06f;
+    background-color: #f9f8f6;
     padding: 8px;
-    border: 1px solid #ccc;
     border-radius: 5px;
     width: calc(100% - 20px);
     margin: 10px;
@@ -90,13 +90,13 @@ h3 {
     box-sizing: border-box;
 }
 
-.chat-input:focus {
-    border-color: #007AFF;
-    outline: none;
-}
+    .chat-input:focus {
+        border-color: #007AFF;
+        outline: none;
+    }
 
 @media screen and (max-width: 600px) {
     * {
-         font-size: 32px;
+        font-size: 32px;
     }
 }
