@@ -21,15 +21,19 @@ html, body {
 .chat-wrapper {
     display: flex;
     flex-direction: column;
-    height: 90vh;
+    height: 100vh;
+    /* Ensure wrapper fills viewport */
+    padding-bottom: 60px; /* Reserve space for chat-input height + margin */
+    box-sizing: border-box;
 }
 
 .chat-container {
-    flex: 1;
+    flex: 1 1 auto;
     overflow-y: auto;
     padding: 10px;
     border: 0px solid #ccc;
-    margin-bottom: 0px;
+    margin-bottom: 0;
+    min-height: 0; /* Prevent overflow in flexbox */
 }
 
 .message {
