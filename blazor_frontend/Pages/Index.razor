@@ -15,7 +15,14 @@
         }
         @if (isThinking)
         {
-            <div class="message thinking-message">The AI is thinking...</div>
+            <div class="message thinking-message">
+                The AI is thinking
+                <span class="thinking-dots">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </span>
+            </div>
         }
     </div>
     <input @bind="inputText" @bind:event="oninput" placeholder="Ask your question..." @onkeydown="HandleKeyDown" class="chat-input" />
