@@ -22,7 +22,7 @@ html, body {
 .chat-wrapper {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    max-height: calc(100vh - 16px);
     /* Ensure wrapper fills viewport */
     padding-bottom: 60px; /* Reserve space for chat-input height + margin */
     box-sizing: border-box;
