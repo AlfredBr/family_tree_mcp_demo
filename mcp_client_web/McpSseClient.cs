@@ -1,9 +1,6 @@
-using Microsoft.Extensions.ServiceDiscovery;
-
-using ModelContextProtocol.Client;
-
 using System.Net;
-
+using Microsoft.Extensions.ServiceDiscovery;
+using ModelContextProtocol.Client;
 using Throw;
 
 namespace mcp_client_web;
