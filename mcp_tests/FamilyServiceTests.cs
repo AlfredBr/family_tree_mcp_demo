@@ -20,7 +20,7 @@ public class FamilyServiceTests
     {
         // Initialize the FamilyServiceClient
         var httpClient = new HttpClient { BaseAddress = new Uri("http://localhost:5010") };
-		var logger = new Mock<ILogger<FamilyServiceClient>>();
+        var logger = new Mock<ILogger<FamilyServiceClient>>();
         Assert.IsNotNull(logger.Object);
         _familyServiceClient = new FamilyServiceClient(httpClient, logger.Object);
     }
@@ -29,12 +29,12 @@ public class FamilyServiceTests
     public async Task A00_Preflight_Check()
     {
         await _familyServiceClient.LogAsync("Preflight Check");
-		// This test is just to ensure the setup is correct and the client can log messages
+        // This test is just to ensure the setup is correct and the client can log messages
         Assert.IsNotNull(_familyServiceClient, "FamilyServiceClient should be initialized");
         await _familyServiceClient.LogAsync("Preflight Check Passed");
-	}
+    }
 
-	[TestMethod]
+    [TestMethod]
     public async Task T01_GetFamily_ShouldReturnListOfPeople()
     {
         // Arrange
@@ -74,61 +74,63 @@ public class FamilyServiceTests
     }
 
     [TestMethod]
-	public async Task T04_AddPerson_ShouldAddAndReturnPerson()
-	{
-		var testId = "test_addperson";
-		var person = new Person
-		{
-			Id = testId,
-			Name = "Test Add Person",
-			Gender = "male", // Required field
-			YearOfBirth = 1990, // Required field
-			Parents = new List<string>(), // Required field
-			Spouses = new List<string>(), // Required field
-			Children = new List<string>() // Required field
-		};
+    public async Task T04_AddPerson_ShouldAddAndReturnPerson()
+    {
+        var testId = "test_addperson";
+        var person = new Person
+        {
+            Id = testId,
+            Name = "Test Add Person",
+            Gender = "male", // Required field
+            YearOfBirth = 1990, // Required field
+            PlaceOfBirth = "Unknown", // Added to fix CS9035
+            Parents = new List<string>(), // Required field
+            Spouses = new List<string>(), // Required field
+            Children = new List<string>() // Required field
+        };
 
-		await _familyServiceClient.AddPerson(person);
-		var fetched = await _familyServiceClient.GetPerson(testId);
-		Assert.IsNotNull(fetched);
-		Assert.AreEqual(testId, fetched?.Id);
+        await _familyServiceClient.AddPerson(person);
+        var fetched = await _familyServiceClient.GetPerson(testId);
+        Assert.IsNotNull(fetched);
+        Assert.AreEqual(testId, fetched?.Id);
         Assert.AreEqual("Test Add Person", fetched?.Name);
         Assert.AreEqual(1990, fetched?.YearOfBirth);
         Assert.AreEqual("male", fetched?.Gender, true);
-		await _familyServiceClient.DeletePerson(testId); // Clean up after test
-	}
+        await _familyServiceClient.DeletePerson(testId); // Clean up after test
+    }
 
     [TestMethod]
     public async Task T05_UpdatePerson()
     {
         var testId = "test_addperson";
-		var person = new Person
-		{
-			Id = testId,
-			Name = "Test Add Person",
-			Gender = "female", // Required field
-			YearOfBirth = 1990, // Required field
-			Parents = new List<string>(), // Required field
-			Spouses = new List<string>(), // Required field
-			Children = new List<string>() // Required field
-		};
-		// Add the person first
-		await _familyServiceClient.AddPerson(person);
+        var person = new Person
+        {
+            Id = testId,
+            Name = "Test Add Person",
+            Gender = "female", // Required field
+            YearOfBirth = 1990, // Required field
+            PlaceOfBirth = "Unknown", // Added to fix CS9035
+            Parents = new List<string>(), // Required field
+            Spouses = new List<string>(), // Required field
+            Children = new List<string>() // Required field
+        };
+        // Add the person first
+        await _familyServiceClient.AddPerson(person);
         var fetched = await _familyServiceClient.GetPerson(testId);
-		Assert.AreEqual("Test Add Person", fetched?.Name);
+        Assert.AreEqual("Test Add Person", fetched?.Name);
         // Update the person
         person.Name = "Test Add Person Updated";
         person.Gender = "male";
-		await _familyServiceClient.UpdatePerson(testId, person);
+        await _familyServiceClient.UpdatePerson(testId, person);
         fetched = await _familyServiceClient.GetPerson(testId);
         Assert.IsNotNull(fetched);
-		Assert.AreEqual(testId, fetched?.Id);
-		Assert.AreEqual("Test Add Person Updated", fetched?.Name);
-		Assert.AreEqual(1990, fetched?.YearOfBirth);
-		Assert.AreEqual("male", fetched?.Gender, true);
-	}
+        Assert.AreEqual(testId, fetched?.Id);
+        Assert.AreEqual("Test Add Person Updated", fetched?.Name);
+        Assert.AreEqual(1990, fetched?.YearOfBirth);
+        Assert.AreEqual("male", fetched?.Gender, true);
+    }
 
-	[TestMethod]
+    [TestMethod]
     public async Task T06_DeletePerson_ShouldRemovePerson()
     {
         var testId = "test_addperson";
@@ -148,6 +150,7 @@ public class FamilyServiceTests
             Name = "First Person",
             Gender = "male",
             YearOfBirth = 1990,
+            PlaceOfBirth = "Unknown", // Added to fix CS9035
             Parents = new List<string>(),
             Spouses = new List<string>(),
             Children = new List<string>()
@@ -159,6 +162,7 @@ public class FamilyServiceTests
             Name = "Second Person",
             Gender = "female",
             YearOfBirth = 1995,
+            PlaceOfBirth = "Unknown",
             Parents = new List<string>(),
             Spouses = new List<string>(),
             Children = new List<string>()
@@ -186,6 +190,7 @@ public class FamilyServiceTests
             Name = "Non Existent",
             Gender = "other",
             YearOfBirth = 2000,
+            PlaceOfBirth = "Unknown",
             Parents = new List<string>(),
             Spouses = new List<string>(),
             Children = new List<string>()
@@ -223,6 +228,7 @@ public class FamilyServiceTests
             Name = "Test Parent",
             Gender = "male",
             YearOfBirth = 1970,
+            PlaceOfBirth = "Unknown",
             Parents = new List<string>(),
             Spouses = new List<string>(),
             Children = new List<string>()
@@ -235,6 +241,7 @@ public class FamilyServiceTests
             Name = "Test Spouse",
             Gender = "female",
             YearOfBirth = 1972,
+            PlaceOfBirth = "Unknown",
             Parents = new List<string>(),
             Spouses = new List<string>(),
             Children = new List<string>()
@@ -247,6 +254,7 @@ public class FamilyServiceTests
             Name = "Test Child",
             Gender = "other",
             YearOfBirth = 2000,
+            PlaceOfBirth = "Unknown",
             Parents = new List<string>(),
             Spouses = new List<string>(),
             Children = new List<string>()
@@ -303,6 +311,7 @@ public class FamilyServiceTests
             Name = "Case Test Person",
             Gender = "male",
             YearOfBirth = 1985,
+            PlaceOfBirth = "Unknown",
             Parents = new List<string>(),
             Spouses = new List<string>(),
             Children = new List<string>()
@@ -337,17 +346,20 @@ public class FamilyServiceTests
             Name = "Original Name",
             Gender = "male",
             YearOfBirth = 1990,
+            PlaceOfBirth = "Unknown", // Added to fix CS9035
             Parents = new List<string>(),
             Spouses = new List<string>(),
             Children = new List<string>()
         };
 
-        await _familyServiceClient.AddPerson(originalPerson);        var updatedPerson = new Person
+        await _familyServiceClient.AddPerson(originalPerson);
+        var updatedPerson = new Person
         {
             Id = testId,
             Name = "Updated Name",
             Gender = "female",
             YearOfBirth = 1992,
+            PlaceOfBirth = "Unknown", // Added to fix CS9035
             Parents = new List<string>(),
             Spouses = new List<string>(),
             Children = new List<string>()
@@ -406,6 +418,7 @@ public class FamilyServiceTests
             Name = "", // Empty name
             Gender = "other",
             YearOfBirth = 1995,
+            PlaceOfBirth = "Unknown", // Added to fix CS9035
             Parents = new List<string>(),
             Spouses = new List<string>(),
             Children = new List<string>()
@@ -432,6 +445,7 @@ public class FamilyServiceTests
             Name = "Test Name with Special Chars: àáâãäåæçèéêë",
             Gender = "non-binary",
             YearOfBirth = 1995,
+            PlaceOfBirth = "Unknown", // Added to fix CS9035
             Parents = new List<string>(),
             Spouses = new List<string>(),
             Children = new List<string>()
@@ -460,6 +474,7 @@ public class FamilyServiceTests
             Name = "Ancient Person",
             Gender = "male",
             YearOfBirth = 1800, // Very old
+            PlaceOfBirth = "Unknown", // Added to fix CS9035
             Parents = new List<string>(),
             Spouses = new List<string>(),
             Children = new List<string>()
