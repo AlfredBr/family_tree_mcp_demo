@@ -7,7 +7,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
-    <PackageReference Include="Microsoft.Extensions.Logging" />
     <PackageReference Include="Throw" />
   </ItemGroup>
   <ItemGroup>
